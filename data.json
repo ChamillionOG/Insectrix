@@ -1,0 +1,15 @@
+{
+    "bugs": 10,
+    "max_bugs": 3,
+    "currency": 0,
+    "bugnet": "basic",
+    "enviroment": "forest",
+    "container": {
+        "type": "small_jar",
+        "capacity": 10,
+        "offset": 15,
+        "bugs": {
+            "monarch_butterfly": 10
+        }
+    }
+}
