@@ -2,7 +2,6 @@ import pygame
 import random
 
 from savesManager import save_data
-from popupText import PopupTextManager
 
 bug_definitions = {
     "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png"}

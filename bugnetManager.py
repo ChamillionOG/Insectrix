@@ -6,7 +6,7 @@ class BugnetManager():
         self.rect = rect
 
         self.angle = 0
-        self.max_angle = 60
+        self.max_angle = 80
         self.swing_speed = 24
         self.swinging = False
         self.returning = False
