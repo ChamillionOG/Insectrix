@@ -32,6 +32,11 @@ class BugnetManager():
                 self.returning = False
 
         self.image = pygame.transform.rotate(self.image, self.angle)
-        self.rect = self.image.get_rect(center=mouse.get_pos())
+
+        mouseX, mouseY = mouse.get_pos()
+        self.rect = self.image.get_rect()
+        self.rect.centerx = mouseX
+        self.rect.centery = mouseY + 60
+
 
         screen.blit(self.image, self.rect)

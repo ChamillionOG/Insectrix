@@ -10,7 +10,7 @@ from bugManager import BugManager
 data = load_data()
 
 print(f"Save Data: {data}")
-
+print("test git")
 def main():
     pygame.init()
     pygame.font.init()
@@ -22,7 +22,7 @@ def main():
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
 
-    font = pygame.font.Font("assets/Pixel.ttf", 50)
+    font = pygame.font.Font("assets/rainyhearts.ttf", 35)
     frame_image = pygame.image.load("assets/ui/buttonFrame.png")
     icon_image = pygame.image.load("assets/images/gameIcon.png")
 
@@ -36,7 +36,7 @@ def main():
     container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data)
     bug_manager = BugManager(data["enviroment"], on_screen_bugs, in_container_bugs, popup_manager)
     bugnet_manager = BugnetManager(data["bugnet"], (0, 0))
-    upgrade_manager = UpgradeManager(50, 100)
+    upgrade_manager = UpgradeManager(-50, -75, popup_manager, data)
 
     container_manager.loadBugs(data)
 
@@ -44,11 +44,13 @@ def main():
     spawn_delay = 1000
 
     buttons_list = [
-        UpgradeButton(0, 0, 500, 300, frame_image, icon_image, "Test", 1, font)
+        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test", 1, font),
+        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test2", 2, font),
+        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test3", 3, font),
     ]
 
     for button in buttons_list:
-        upgrade_manager.add_button(button)
+        upgrade_manager.add_button(button, screen_width)
 
     running = True
     while running:

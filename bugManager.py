@@ -4,7 +4,7 @@ import random
 from savesManager import save_data
 
 bug_definitions = {
-    "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png"}
+    "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png", "name": "Monarch Butterfly"}
 }
 
 enviroment_definitions = {
@@ -56,14 +56,14 @@ class BugManager:
                     self.in_container_bugs.append(bug)
                     bugs = data["container"]["bugs"]
                     bugs[bug.type] = bugs.get(bug.type, 0) + 1
-
-                    self.popup_manager.spawn(f"+1 {bug.type}", (255, 255, 255), mouseX, mouseY + 50, 1)
+                    bug_name = bug_definitions[bug.type]["name"]
+                    self.popup_manager.spawn(f"+1 {bug_name}", (255, 255, 255), mouseX, mouseY + 50, 1)
 
                     data["bugs"] += 1
                     save_data(data)
                     return True
                 elif data["bugs"] == data["container"]["capacity"]:
-                    self.popup_manager.spawn("You have a full container!", (255, 255, 255), mouseX, mouseY + 50, 1)
+                    self.popup_manager.spawn("You have a full container!", (255, 0, 0), mouseX, mouseY + 50, 1)
         return False
     
     def update(self, screen_width, screen):
