@@ -10,7 +10,7 @@ from bugManager import BugManager
 data = load_data()
 
 print(f"Save Data: {data}")
-print("test git")
+
 def main():
     pygame.init()
     pygame.font.init()
