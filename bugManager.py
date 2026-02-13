@@ -2,8 +2,8 @@ import pygame
 import random
 
 from savesManager import save_data
-from definitions.bugDefinitions import bug_definitions
-from definitions.enviromentDefinitions import enviroment_definitions
+from dictionaries.bugDefinitions import bug_definitions
+from dictionaries.enviromentDefinitions import enviroment_definitions
 
 class Bug:
     def __init__(self, bug_type, x, y):

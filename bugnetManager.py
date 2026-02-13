@@ -1,6 +1,6 @@
 import pygame
 
-from definitions.bugnetDefinitions import bugnet_definitions
+from dictionaries.bugnetDefinitions import bugnet_definitions
 
 cursor_icon = pygame.image.load("assets/ui/mouse_cursor.png")
 cursor_icon = pygame.transform.scale(cursor_icon, (64, 64))
