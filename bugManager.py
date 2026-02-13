@@ -2,15 +2,8 @@ import pygame
 import random
 
 from savesManager import save_data
-
-bug_definitions = {
-    "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png", "name": "Monarch Butterfly"},
-    "bee": {"image": "assets/images/bugs/bee.png", "name": "Bee"},
-}
-
-enviroment_definitions = {
-    "forest": {"bugs": ["monarch_butterfly", "bee"]}
-}
+from definitions.bugDefinitions import bug_definitions
+from definitions.enviromentDefinitions import enviroment_definitions
 
 class Bug:
     def __init__(self, bug_type, x, y):
@@ -43,7 +36,10 @@ class BugManager:
         bug = Bug(bug_type, random.randint(0, screen_width - 128), random.randint(0, screen_height -128))
         self.on_screen_bugs.append(bug)
     
-    def collect_bug(self, pos, container_rect, data, mouse):
+    def collect_bug(self, pos, container_rect, data, mouse, bugnet_manager):
+        if not bugnet_manager.can_swing(data):
+            return False
+
         mouseX, mouseY = mouse.get_pos()
 
         for bug in self.on_screen_bugs:

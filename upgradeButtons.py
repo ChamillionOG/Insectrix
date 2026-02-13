@@ -73,9 +73,9 @@ class UpgradeManager:
         for button in reversed(self.buttons): # --- Displays buttons in order
             button.draw(screen)
 
-    def handle_click(self, pos):
+    def handle_click(self, mouse_pos):
         for button in self.buttons:
-            if button.is_clicked(pos):
+            if button.is_clicked(mouse_pos):
                 
                 if button.owns_upgrade(self.data): # --- If Owns Upgrade
                     self.popup_manager.spawn("Already Owned!", (255, 255, 255), button.rect.centerx - 275, button.rect.centery, 1)
