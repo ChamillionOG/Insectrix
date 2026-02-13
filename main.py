@@ -36,7 +36,7 @@ def main():
     container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data)
     bug_manager = BugManager(data["enviroment"], on_screen_bugs, in_container_bugs, popup_manager)
     bugnet_manager = BugnetManager(data["bugnet"], (0, 0))
-    upgrade_manager = UpgradeManager(-50, -75, popup_manager, data)
+    upgrade_manager = UpgradeManager(25, -55, popup_manager, data)
 
     container_manager.loadBugs(data)
 
@@ -44,9 +44,9 @@ def main():
     spawn_delay = 1000
 
     buttons_list = [
-        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test", 1, font),
-        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test2", 2, font),
-        UpgradeButton(50, 0, 500, 300, frame_image, icon_image, "Test3", 3, font),
+        UpgradeButton(0, 0, 300, 200, frame_image, icon_image,  "Test", 1, font),
+        UpgradeButton(0, 0, 300, 200, frame_image, icon_image, "Test2", 2, font),
+        UpgradeButton(0, 0, 300, 200, frame_image, icon_image, "Test3", 3, font),
     ]
 
     for button in buttons_list:
@@ -69,6 +69,13 @@ def main():
         if spawn_timer >= spawn_delay and len(on_screen_bugs) < data["max_bugs"]:
             bug_manager.spawn_bug(screen_width, screen_height)
             spawn_timer = 0
+
+        if upgrade_manager.is_hovering(pygame.mouse.get_pos()):
+            bugnet_manager.visible = False
+            pygame.mouse.set_visible(True)
+        else:
+            bugnet_manager.visible = True
+            pygame.mouse.set_visible(False)
 
         bugnet_manager.update(screen, pygame.mouse, data)
         bug_manager.update(screen_width, screen)

@@ -10,6 +10,7 @@ class BugnetManager():
         self.swing_speed = 24
         self.swinging = False
         self.returning = False
+        self.visible = True
 
     def swing(self):
         if not self.swinging and not self.returning:
@@ -38,5 +39,5 @@ class BugnetManager():
         self.rect.centerx = mouseX
         self.rect.centery = mouseY + 60
 
-
-        screen.blit(self.image, self.rect)
+        if self.visible:
+            screen.blit(self.image, self.rect)

@@ -4,11 +4,12 @@ import random
 from savesManager import save_data
 
 bug_definitions = {
-    "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png", "name": "Monarch Butterfly"}
+    "monarch_butterfly": {"image": "assets/images/bugs/monarchButterfly.png", "name": "Monarch Butterfly"},
+    "bee": {"image": "assets/images/bugs/bee.png", "name": "Bee"},
 }
 
 enviroment_definitions = {
-    "forest": {"bugs": ["monarch_butterfly"]}
+    "forest": {"bugs": ["monarch_butterfly", "bee"]}
 }
 
 class Bug:
