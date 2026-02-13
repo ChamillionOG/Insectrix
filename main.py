@@ -61,8 +61,7 @@ def main():
     upgrade_icons_path = "assets/images/upgradeIcons/"
 
     buttons_list = [
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Amir Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "amir")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "sturdy"))
     ]
 
     for button in buttons_list:
@@ -85,7 +84,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 bug_manager.collect_bug(event.pos, container_manager.container_image_rect, data, pygame.mouse) # --- Bug Clicked
                 upgrade_manager.handle_click(event.pos)                                                        # --- Button Clicked
-                bugnet_manager.swing()                                                                         # --- Bugnet Swung
+                bugnet_manager.swing(data)                                                                         # --- Bugnet Swung
 
         screen.blit(enviroment_background, (0, 0))
         spawn_timer += clock.get_time()

@@ -4,6 +4,11 @@ cursor_icon = pygame.image.load("assets/ui/mouse_cursor.png")
 cursor_icon = pygame.transform.scale(cursor_icon, (64, 64))
 cursor_icon_rect = cursor_icon.get_rect()
 
+bugnet_definitions = {
+    "wooden": {"cooldown": 1.5},
+    "sturdy": {"cooldown": 1.35}
+}
+
 class BugnetManager():
     def __init__(self, image, rect):
         self.image = image
@@ -12,13 +17,19 @@ class BugnetManager():
         self.angle = 0
         self.max_angle = 80
         self.swing_speed = 24
+        self.last_swing_time = 0
         self.swinging = False
         self.returning = False
         self.visible = True
 
-    def swing(self):
-        if not self.swinging and not self.returning and self.visible:
+    def swing(self, data):
+        current_time = pygame.time.get_ticks() / 1000
+        bugnet_type = data["bugnet"]
+        cooldown = bugnet_definitions[bugnet_type]["cooldown"]
+
+        if not self.swinging and not self.returning and current_time - self.last_swing_time >= cooldown: # --- Cooldowns & Management
             self.swinging = True
+            self.last_swing_time = current_time
 
     def update(self, screen, mouse, data):
         self.image = pygame.image.load(f"assets/images/bugnets/{data["bugnet"]}.png").convert_alpha()
