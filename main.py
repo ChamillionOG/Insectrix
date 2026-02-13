@@ -61,11 +61,13 @@ def main():
     upgrade_icons_path = "assets/images/upgradeIcons/"
 
     buttons_list = [
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Amir Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "amir")),
     ]
 
     for button in buttons_list:
-        upgrade_manager.add_button(button, screen_width)
+        if not data["purchases"].get(button.name, False): # --- If player does not own upgrade, display it
+            upgrade_manager.add_button(button, screen_width)
 
     running = True
 

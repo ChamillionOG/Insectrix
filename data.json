@@ -1,8 +1,8 @@
 {
     "bugs": 10,
     "max_bugs": 3,
-    "currency": 0,
-    "bugnet": "wooden",
+    "currency": 2,
+    "bugnet": "amir",
     "enviroment": "forest",
     "container": {
         "type": "small_jar",
@@ -13,5 +13,8 @@
             "bee": 5
         }
     },
-    "purchases": {}
+    "purchases": {
+        "Sturdy Bugnet": true,
+        "Amir Bugnet": true
+    }
 }
