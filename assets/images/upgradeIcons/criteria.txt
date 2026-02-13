@@ -1,0 +1,11 @@
+Icons Criteria:
+
+256x256
+
+Drop Shadow:
+ - Multiply
+ - Opacity: 57
+ - Angle: 145
+ - Distance: 7
+ - Spread: 0
+ - Size: 13

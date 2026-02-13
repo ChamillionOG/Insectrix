@@ -1,3 +1,7 @@
+#[---------------]#
+#[----IMPORTS----]#
+#[---------------]#
+
 import pygame
 
 from upgradeButtons import UpgradeManager, UpgradeButton
@@ -7,11 +11,20 @@ from popupText import PopupTextManager
 from savesManager import load_data
 from bugManager import BugManager
 
+#[------------]#
+#[----DATA----]#
+#[------------]#
+
 data = load_data()
 
 print(f"Save Data: {data}")
 
 def main():
+
+    #[-------------]#
+    #[----SETUP----]#
+    #[-------------]#
+
     pygame.init()
     pygame.font.init()
 
@@ -22,15 +35,16 @@ def main():
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
 
-    font = pygame.font.Font("assets/rainyhearts.ttf", 35)
-    frame_image = pygame.image.load("assets/ui/buttonFrame.png")
-    icon_image = pygame.image.load("assets/images/gameIcon.png")
+    spawn_timer = 0
+    spawn_delay = 1000
 
     enviroment_background = pygame.image.load(f"assets/images/enviroments/{current_enviroment}.png")
     enviroment_background = pygame.transform.scale(enviroment_background, (screen_width, screen_height))
 
     in_container_bugs = []
     on_screen_bugs = []
+
+    ##[ -- Manager Handlers -- ]##
 
     popup_manager = PopupTextManager()
     container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data)
@@ -40,52 +54,65 @@ def main():
 
     container_manager.loadBugs(data)
 
-    spawn_timer = 0
-    spawn_delay = 1000
+    ##[ -- Button Information -- ]##
+
+    font = pygame.font.Font("assets/rainyhearts.ttf", 35)
+    frame_image = pygame.image.load("assets/ui/buttonFrame.png")
+    upgrade_icons_path = "assets/images/upgradeIcons/"
 
     buttons_list = [
-        UpgradeButton(0, 0, 300, 200, frame_image, icon_image,  "Test", 1, font),
-        UpgradeButton(0, 0, 300, 200, frame_image, icon_image, "Test2", 2, font),
-        UpgradeButton(0, 0, 300, 200, frame_image, icon_image, "Test3", 3, font),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font),
     ]
 
     for button in buttons_list:
         upgrade_manager.add_button(button, screen_width)
 
     running = True
+
+    #[----------------]#
+    #[----GAMELOOP----]#
+    #[----------------]#
+
     while running:
+
+        ##[ -- Input Handling -- ]##
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                bug_manager.collect_bug(event.pos, container_manager.container_image_rect, data, pygame.mouse)
-                upgrade_manager.handle_click(event.pos)
-                bugnet_manager.swing()
-                
+                bug_manager.collect_bug(event.pos, container_manager.container_image_rect, data, pygame.mouse) # --- Bug Clicked
+                upgrade_manager.handle_click(event.pos)                                                        # --- Button Clicked
+                bugnet_manager.swing()                                                                         # --- Bugnet Swung
+
         screen.blit(enviroment_background, (0, 0))
         spawn_timer += clock.get_time()
         dt = clock.tick(60) / 1000
+
+        ##[ -- Bug Spawning -- ]##
 
         if spawn_timer >= spawn_delay and len(on_screen_bugs) < data["max_bugs"]:
             bug_manager.spawn_bug(screen_width, screen_height)
             spawn_timer = 0
 
+        ##[ -- Cursor Icon Handler -- ]##
+
         if upgrade_manager.is_hovering(pygame.mouse.get_pos()):
             bugnet_manager.visible = False
-            pygame.mouse.set_visible(True)
         else:
             bugnet_manager.visible = True
-            pygame.mouse.set_visible(False)
 
+        ##[ -- Visual Updates -- ]##
+
+        upgrade_manager.draw(screen)
         bugnet_manager.update(screen, pygame.mouse, data)
         bug_manager.update(screen_width, screen)
         container_manager.update(screen)
         popup_manager.update(dt)
         popup_manager.draw(screen)
-        upgrade_manager.draw(screen)
         
         pygame.display.flip()
-        clock.tick(180)
+        clock.tick(60)
 
     pygame.quit()
 

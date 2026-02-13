@@ -1,5 +1,9 @@
 import pygame
 
+cursor_icon = pygame.image.load("assets/ui/mouse_cursor.png")
+cursor_icon = pygame.transform.scale(cursor_icon, (64, 64))
+cursor_icon_rect = cursor_icon.get_rect()
+
 class BugnetManager():
     def __init__(self, image, rect):
         self.image = image
@@ -13,7 +17,7 @@ class BugnetManager():
         self.visible = True
 
     def swing(self):
-        if not self.swinging and not self.returning:
+        if not self.swinging and not self.returning and self.visible:
             self.swinging = True
 
     def update(self, screen, mouse, data):
@@ -36,8 +40,12 @@ class BugnetManager():
 
         mouseX, mouseY = mouse.get_pos()
         self.rect = self.image.get_rect()
-        self.rect.centerx = mouseX
-        self.rect.centery = mouseY + 60
 
         if self.visible:
+            self.rect.centerx = mouseX
+            self.rect.centery = mouseY + 60
             screen.blit(self.image, self.rect)
+        else:
+            cursor_icon_rect.centerx = mouseX
+            cursor_icon_rect.centery = mouseY
+            screen.blit(cursor_icon, cursor_icon_rect)

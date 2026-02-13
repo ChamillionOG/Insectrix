@@ -65,14 +65,14 @@ class UpgradeManager:
         for button in self.buttons:
             if button.is_clicked(pos):
                 
-                if button.owns_upgrade(self.data):
+                if button.owns_upgrade(self.data): # --- If Owns Upgrade
                     self.popup_manager.spawn("Already Owned!", (255, 255, 255), button.rect.centerx - 275, button.rect.centery, 1)
-                elif button.can_afford(self.data):
+                elif button.can_afford(self.data): # --- Purchased Upgrade
                     self.popup_manager.spawn("Purchased!", (0, 255, 0), button.rect.centerx - 275, button.rect.centery, 1)
                     self.data["currency"] -= button.price
                     self.data["purchases"][button.name] = True
                     save_data(self.data)
-                else:
+                else: # --- Can't Afford Upgrade
                     self.popup_manager.spawn("Can't Afford.", (255, 0, 0), button.rect.centerx - 275, button.rect.centery, 1)
 
                 return button
