@@ -108,13 +108,13 @@ def main():
 
         ##[ -- Visual Updates -- ]##
 
-        upgrade_manager.draw(screen)
-        phone_manager.update(screen, dt)
-        bugnet_manager.update(screen, pygame.mouse, data)
-        bug_manager.update(screen_width, screen)
-        container_manager.update(screen)
-        popup_manager.update(dt)
-        popup_manager.draw(screen)
+        upgrade_manager.draw(screen)                      # --- Upgrade Draw
+        phone_manager.update(screen, dt)                  # --- Phone Update
+        bugnet_manager.update(screen, pygame.mouse, data) # --- Bugnet Update
+        bug_manager.update(screen_width, screen)          # --- Bug Update
+        container_manager.update(screen)                  # --- Container Update
+        popup_manager.update(dt)                          # --- Popup Update
+        popup_manager.draw(screen)                        # --- Popup Draw
         
         pygame.display.flip()
         clock.tick(60)
