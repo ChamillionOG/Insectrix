@@ -90,8 +90,8 @@ def main():
                 bugnet_manager.swing(data)                                                                                     # --- Bugnet Swung
 
         screen.blit(enviroment_background, (0, 0))
-        spawn_timer += clock.get_time()
         dt = clock.tick(60) / 1000
+        spawn_timer += dt * 1000
 
         ##[ -- Bug Spawning -- ]##
 
@@ -101,7 +101,9 @@ def main():
 
         ##[ -- Cursor Icon Handler -- ]##
 
-        if upgrade_manager.is_hovering(pygame.mouse.get_pos()) or phone_manager.is_hovering(pygame.mouse.get_pos()):
+        mouse_pos = pygame.mouse.get_pos()
+
+        if upgrade_manager.is_hovering(mouse_pos) or phone_manager.is_hovering(mouse_pos):
             bugnet_manager.visible = False
         else:
             bugnet_manager.visible = True
@@ -117,7 +119,7 @@ def main():
         popup_manager.draw(screen)                        # --- Popup Draw
         
         pygame.display.flip()
-        clock.tick(60)
+        #clock.tick(60)
 
     pygame.quit()
 

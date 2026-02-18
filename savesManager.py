@@ -19,15 +19,16 @@ def create_new_save():
     data = {
         "bugs": 0,
         "max_bugs": 3,
-        "bugnet": "basic",
+        "bugnet": "wooden",
         "enviroment": "forest",
         
         "container": {
             "type": "small_jar",
             "capacity": 10,
             "offset": 15,
-            "bugs": []
-        }
+            "bugs": {}
+        },
+        "purchases": {}
     }
 
     print("New Save File Created!")
