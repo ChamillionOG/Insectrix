@@ -7,6 +7,7 @@ class ContainerManager:
     def __init__(self, container_data, screen_height, in_container_bugs, data):
         self.container_data = container_data
         self.in_container_bugs = in_container_bugs
+        self.data = data
 
         self.container_image = pygame.image.load(f"assets/images/containers/{data['container']['type']}.png").convert_alpha()
         self.container_image = pygame.transform.scale(self.container_image, (640, 640))
@@ -56,3 +57,6 @@ class ContainerManager:
                 bug.velY = 0
 
                 self.in_container_bugs.append(bug)
+
+    def refreshBugs(self):
+        self.loadBugs(self.data)

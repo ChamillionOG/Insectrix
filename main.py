@@ -48,8 +48,8 @@ def main():
     ##[ -- Manager Handlers -- ]##
 
     popup_manager = PopupTextManager()                                                              # --- Popup Manager
-    phone_manager = PhoneManager(screen_width, screen_height, "off")                                # --- Phone Manager
     container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data) # --- Container Manager
+    phone_manager = PhoneManager(screen_width, screen_height, container_manager, data, "off")             # --- Phone Manager
     bug_manager = BugManager(data["enviroment"], on_screen_bugs, in_container_bugs, popup_manager)  # --- Bug Manager
     bugnet_manager = BugnetManager(data["bugnet"], (0, 0))                                          # --- Bugnet Manager
     upgrade_manager = UpgradeManager(25, -55, popup_manager, data)                                  # --- Upgrade Button Manager
@@ -119,7 +119,7 @@ def main():
         popup_manager.draw(screen)                        # --- Popup Draw
         
         pygame.display.flip()
-        #clock.tick(60)
+        clock.tick(60)
 
     pygame.quit()
 

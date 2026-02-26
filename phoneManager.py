@@ -1,7 +1,11 @@
 import pygame
 
+from savesManager import load_data, save_data
+from containerManager import ContainerManager
+
 class AppIcon:
-    def __init__(self, image_path, offset_x, offset_y, size=(48, 48)):
+    def __init__(self, name, image_path, offset_x, offset_y, size=(48, 48)):
+        self.name = name
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, size)
 
@@ -20,7 +24,7 @@ class AppIcon:
         return self.rect.collidepoint(mouse_pos)
 
 class PhoneManager:
-    def __init__(self, screen_width, screen_height, status="off"):
+    def __init__(self, screen_width, screen_height, container_manager, data, status="off"):
         self.phone_off = pygame.image.load("assets/phone/phone_off.png").convert_alpha()
         self.phone_off = pygame.transform.scale(self.phone_off, (275, 500))
 
@@ -29,6 +33,8 @@ class PhoneManager:
 
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.container_manager = container_manager
+        self.data = data
         self.status = status
 
         self.image = self.phone_off
@@ -39,7 +45,8 @@ class PhoneManager:
         self.targetY = self.offY
 
         self.apps = [
-            AppIcon("assets/phone/sell_app.png", 40, 80)
+            AppIcon("sellApp", "assets/phone/sell_app.png", 40, 80),
+            AppIcon("testApp", "assets/phone/sell_app.png", 80, 80)
         ]
 
     def updatePhoneStatus(self, statusInput):
@@ -55,6 +62,15 @@ class PhoneManager:
             for app in self.apps:
                 if app.handle_click(mouse_pos):
                     print("App Clicked")
+                    if app.name == "sellApp":
+                        total = sum(self.data["container"]["bugs"].values())
+
+                        self.data["currency"] += total
+                        self.data["container"]["bugs"] = {}
+                        self.data["bugs"] = 0
+                        save_data(self.data)
+                        self.container_manager.refreshBugs()
+                        print(f"Sold {total} bugs")
                     return
 
         if self.rect.collidepoint(mouse_pos):

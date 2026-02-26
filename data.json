@@ -1,17 +1,16 @@
 {
-    "bugs": 10,
+    "bugs": 0,
     "max_bugs": 3,
-    "currency": 0,
-    "bugnet": "wooden",
+    "currency": 24,
+    "bugnet": "sturdy",
     "enviroment": "forest",
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {
-            "bee": 3,
-            "monarch_butterfly": 7
-        }
+        "bugs": {}
     },
-    "purchases": {}
+    "purchases": {
+        "Sturdy Bugnet": true
+    }
 }
