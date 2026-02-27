@@ -39,6 +39,10 @@ def main():
     spawn_timer = 0
     spawn_delay = 1000
 
+    display_currency = data["currency"]
+
+    currency_font = pygame.font.Font("assets/Pixel.ttf", 70)
+
     enviroment_background = pygame.image.load(f"assets/images/enviroments/{current_enviroment}.png")
     enviroment_background = pygame.transform.scale(enviroment_background, (screen_width, screen_height))
 
@@ -49,7 +53,7 @@ def main():
 
     popup_manager = PopupTextManager()                                                              # --- Popup Manager
     container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data) # --- Container Manager
-    phone_manager = PhoneManager(screen_width, screen_height, container_manager, data, "off")             # --- Phone Manager
+    phone_manager = PhoneManager(screen_width, screen_height, container_manager, data, "off")       # --- Phone Manager
     bug_manager = BugManager(data["enviroment"], on_screen_bugs, in_container_bugs, popup_manager)  # --- Bug Manager
     bugnet_manager = BugnetManager(data["bugnet"], (0, 0))                                          # --- Bugnet Manager
     upgrade_manager = UpgradeManager(25, -55, popup_manager, data)                                  # --- Upgrade Button Manager
@@ -117,6 +121,19 @@ def main():
         container_manager.update(screen)                  # --- Container Update
         popup_manager.update(dt)                          # --- Popup Update
         popup_manager.draw(screen)                        # --- Popup Draw
+
+        ##[ -- Currency Text -- ]##
+
+        if display_currency < data["currency"]:
+            display_currency += 1
+        elif display_currency > data["currency"]:
+            display_currency -= 1
+
+        currency_text = currency_font.render(f"{display_currency} Insectra", True, (255, 255, 255))
+        shadow = currency_font.render(f"{display_currency} Insectra", True, (0, 0, 0))
+        currency_rect = currency_text.get_rect(midtop=(screen_width // 2, 10))
+        screen.blit(shadow, (currency_rect.x + 3, currency_rect.y + 3))
+        screen.blit(currency_text, currency_rect)
         
         pygame.display.flip()
         clock.tick(60)

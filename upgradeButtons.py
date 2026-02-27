@@ -13,7 +13,7 @@ class UpgradeButton:
         self.effect = effect
 
         self.name_text = font.render(name, True, (255, 255, 255))
-        self.price_text = font.render(f"{price}", True, (240, 240, 240))
+        self.price_text = font.render(f"{price} Insectra", True, (240, 240, 240))
 
     def draw(self, screen):
         screen.blit(self.frame_image, self.rect)
