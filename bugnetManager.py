@@ -1,6 +1,6 @@
 import pygame
 
-from dictionaries.bugnetDefinitions import bugnet_definitions
+from dictionaries.bugnetDictionaries import bugnet_dictionaries
 
 cursor_icon = pygame.image.load("assets/ui/mouse_cursor.png")
 cursor_icon = pygame.transform.scale(cursor_icon, (64, 64))
@@ -22,7 +22,7 @@ class BugnetManager():
     def can_swing(self, data):
         current_time = pygame.time.get_ticks() / 1000
         bugnet_type = data["bugnet"]
-        cooldown = bugnet_definitions[bugnet_type]["cooldown"]
+        cooldown = bugnet_dictionaries[bugnet_type]["cooldown"]
 
         return(not self.swinging and not self.returning and current_time - self.last_swing_time >= cooldown)
 

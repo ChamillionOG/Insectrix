@@ -1,16 +1,17 @@
 {
-    "bugs": 2,
+    "bugs": 0,
     "max_bugs": 3,
-    "currency": 9,
+    "currency": 111,
     "bugnet": "wooden",
     "enviroment": "forest",
+    "sellPlan": "free",
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {
-            "bee": 2
-        }
+        "bugs": {}
     },
-    "purchases": {}
+    "purchases": {
+        "Basic Plan": true
+    }
 }

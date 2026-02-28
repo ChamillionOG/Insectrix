@@ -1,4 +1,4 @@
-bug_definitions = {
+bug_dictionaries = {
     "monarch_butterfly": {
         "image": "assets/images/bugs/monarchButterfly.png",
         "name": "Monarch Butterfly"

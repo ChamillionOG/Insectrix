@@ -1,7 +1,9 @@
 import pygame
+import time
 
 from savesManager import load_data, save_data
 from containerManager import ContainerManager
+from dictionaries.sellDictionaries import sell_dictionaries
 
 class AppIcon:
     def __init__(self, name, image_path, offset_x, offset_y, size=(48, 48)):
@@ -31,6 +33,12 @@ class PhoneManager:
         self.phone_on = pygame.image.load("assets/phone/phone_on.png").convert_alpha()
         self.phone_on = pygame.transform.scale(self.phone_on, (275, 500))
 
+        self.phone_sell1 = pygame.image.load("assets/phone/phone_sell1.png").convert_alpha()
+        self.phone_sell1 = pygame.transform.scale(self.phone_sell1, (275, 500))
+
+        self.phone_sell2 = pygame.image.load("assets/phone/phone_sell2.png").convert_alpha()
+        self.phone_sell2 = pygame.transform.scale(self.phone_sell2, (275, 500))
+
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.container_manager = container_manager
@@ -46,8 +54,12 @@ class PhoneManager:
 
         self.apps = [
             AppIcon("sellApp", "assets/phone/sell_app.png", 40, 80),
-            AppIcon("testApp", "assets/phone/sell_app.png", 80, 80)
         ]
+
+        self.selling = False
+        self.sell_timer = 0
+        self.sell_duration = 0
+        self.sell_frame = 0
 
     def updatePhoneStatus(self, statusInput):
         self.status = statusInput
@@ -57,22 +69,21 @@ class PhoneManager:
             return True
         return False
     
-    def handle_click(self, mouse_pos):
+    def handle_click(self, mouse_pos, data):
         if self.status == "on":
             for app in self.apps:
                 if app.handle_click(mouse_pos):
-                    print("App Clicked")
-                    if app.name == "sellApp":
-                        total = sum(self.data["container"]["bugs"].values())
-
-                        self.data["currency"] += total
-                        self.data["container"]["bugs"] = {}
-                        self.data["bugs"] = 0
-                        save_data(self.data)
-                        self.container_manager.refreshBugs()
-                        print(f"Sold {total} bugs")
+                    if app.name == "sellApp" and self.data["bugs"] > 0:
+                        plan_type = data["sellPlan"]
+                        self.status = "selling"
+                        self.selling = True
+                        self.sell_timer = 0
+                        self.sell_frame = 0
+                        self.sell_duration = sell_dictionaries[plan_type]["cooldown"]
+                        self.image = self.phone_sell1
+                        self.sell_frame = 0
                     return
-
+                
         if self.rect.collidepoint(mouse_pos):
             if self.status == "off":
                 self.status = "on"
@@ -86,21 +97,40 @@ class PhoneManager:
             self.image = self.phone_off
         elif self.status == "on":
             self.image = self.phone_on
-
+        
         currentY = self.rect.bottom
         distance = self.targetY - currentY
 
         if abs(distance) > 1:
             move = self.speed * dt
-
             if distance > 0:
                 currentY += min(move, distance)
             else:
                 currentY -= min(move, -distance)
-
             self.rect.bottom = currentY
-
+        
         self.rect.right = self.screen_width
+
+        if self.status == "selling" and self.selling:
+            self.sell_timer += dt
+            self.sell_duration -= dt
+
+            if self.sell_timer >= 0.5:
+                self.sell_timer = 0
+                self.sell_frame = 1 - self.sell_frame
+                self.image = self.phone_sell1 if self.sell_frame == 0 else self.phone_sell2
+
+            if self.sell_duration <= 0:
+                total = sum(self.data["container"]["bugs"].values())
+                self.data["currency"] += total
+                self.data["container"]["bugs"] = {}
+                self.data["bugs"] = 0
+                save_data(self.data)
+                self.container_manager.refreshBugs()
+                self.status = "on"
+                self.selling = False
+                self.image = self.phone_on
+        
         screen.blit(self.image, self.rect)
 
         if self.status == "on":

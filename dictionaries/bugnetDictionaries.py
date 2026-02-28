@@ -1,4 +1,4 @@
-bugnet_definitions = {
+bugnet_dictionaries = {
     "wooden": {
         "cooldown": 1.5
     },

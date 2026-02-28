@@ -21,7 +21,7 @@ def create_new_save():
         "max_bugs": 3,
         "bugnet": "wooden",
         "enviroment": "forest",
-        
+        "sellPlan": "free",
         "container": {
             "type": "small_jar",
             "capacity": 10,
