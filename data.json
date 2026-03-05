@@ -1,7 +1,8 @@
 {
     "bugs": 0,
     "max_bugs": 3,
-    "currency": 111,
+    "spawn_rate": 1,
+    "currency": 705,
     "bugnet": "wooden",
     "enviroment": "forest",
     "sellPlan": "free",
@@ -11,7 +12,5 @@
         "offset": 15,
         "bugs": {}
     },
-    "purchases": {
-        "Basic Plan": true
-    }
+    "purchases": {}
 }

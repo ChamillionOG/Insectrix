@@ -4,6 +4,7 @@
 
 import pygame
 
+from dictionaries.containerDictionaries import container_dictionaries
 from upgradeButtons import UpgradeManager, UpgradeButton
 from containerManager import ContainerManager
 from bugnetManager import BugnetManager
@@ -37,7 +38,7 @@ def main():
     clock = pygame.time.Clock()
 
     spawn_timer = 0
-    spawn_delay = 1000
+    base_spawn_delay = 1000
 
     display_currency = data["currency"]
 
@@ -66,9 +67,25 @@ def main():
     frame_image = pygame.image.load("assets/ui/buttonFrame.png")
     upgrade_icons_path = "assets/images/upgradeIcons/"
 
+    def create_container_data(container_type, old_container=None):
+        template = container_dictionaries[container_type]
+
+        existing_bugs = {}
+        if old_container and "bugs" in old_container:
+            existing_bugs = old_container["bugs"]
+
+        return {
+            "type": container_type,
+            "capacity": template["capacity"],
+            "offset": template["offset"],
+            "bugs": existing_bugs
+        }
+
     buttons_list = [
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}truck_icon.png"), "Basic Plan", 2, font, effect=lambda v: v.__setitem__("sellPlan", "basic"))
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, True, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}medium_jar_icon.png"), "Medium Jar", 2, font, True, effect=lambda v: v.__setitem__("container", create_container_data("medium_jar", v["container"]))),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}truck_icon.png"), "Basic Plan", 3, font, True, effect=lambda v: v.__setitem__("sellPlan", "basic")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}pollen_icon.png"), "Pollen Bottle", 4, font, False, effect=lambda v: v.__setitem__("spawn_rate", round(v["spawn_rate"] + 0.05, 2)))
     ]
 
     for button in buttons_list:
@@ -99,6 +116,8 @@ def main():
         spawn_timer += dt * 1000
 
         ##[ -- Bug Spawning -- ]##
+
+        spawn_delay = base_spawn_delay / data["spawn_rate"]
 
         if spawn_timer >= spawn_delay and len(on_screen_bugs) < data["max_bugs"]:
             bug_manager.spawn_bug(screen_width, screen_height)

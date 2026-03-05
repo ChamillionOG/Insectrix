@@ -1,0 +1,11 @@
+container_dictionaries = {
+    "small_jar": {
+        "capacity": 10,
+        "offset": 15
+    },
+
+    "medium_jar": {
+        "capacity": 15,
+        "offset": 30
+    },
+}

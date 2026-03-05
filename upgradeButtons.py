@@ -3,13 +3,14 @@ import pygame
 from savesManager import save_data
 
 class UpgradeButton:
-    def __init__(self, x, y, width, height, frame_image, icon_image, name, price, font, effect=None):
+    def __init__(self, x, y, width, height, frame_image, icon_image, name, price, font, one_time, effect=None):
         self.frame_image = pygame.transform.scale(frame_image, (width, height))
         self.rect = self.frame_image.get_rect(topleft=(x, y))
         self.icon_image = pygame.transform.scale(icon_image, (64, 64))
         self.name = name
         self.price = price
         self.font = font
+        self.one_time = one_time
         self.effect = effect
 
         self.name_text = font.render(name, True, (255, 255, 255))
@@ -83,8 +84,10 @@ class UpgradeManager:
                     button.apply_upgrade(self.data)
                     self.popup_manager.spawn("Purchased!", (0, 255, 0), button.rect.centerx - 275, button.rect.centery, 1)
                     self.data["currency"] -= button.price
-                    self.data["purchases"][button.name] = True
-                    self.buttons.remove(button)
+                    if button.one_time:
+                        self.data["purchases"][button.name] = True
+                        self.buttons.remove(button)
+                        print("bought 1 time")
                     self.reorder_buttons(pygame.display.get_surface().get_width())
                     save_data(self.data)
                 else: # --- Can't Afford Upgrade

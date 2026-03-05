@@ -9,6 +9,8 @@ class ContainerManager:
         self.in_container_bugs = in_container_bugs
         self.data = data
 
+        self.current_container_type = self.data["container"]["type"]
+
         self.container_image = pygame.image.load(f"assets/images/containers/{data['container']['type']}.png").convert_alpha()
         self.container_image = pygame.transform.scale(self.container_image, (640, 640))
 
@@ -18,6 +20,15 @@ class ContainerManager:
         self.bug_count = data["bugs"]
 
     def update(self, screen):
+        new_type = self.data["container"]["type"]
+        if new_type != self.current_container_type:
+            self.current_container_type = new_type
+            self.container_data = self.data["container"]
+
+            self.container_image = pygame.image.load(f"assets/images/containers/{new_type}.png").convert_alpha()
+            self.container_image = pygame.transform.scale(self.container_image, (640, 640))
+            self.refreshBugs()
+
         for i, bug in enumerate(self.in_container_bugs):
             container_floor = (self.container_image_rect.bottom - (i + 1) * ((100 // self.container_data["capacity"]) * 4) - self.container_data["offset"])
 
@@ -41,7 +52,7 @@ class ContainerManager:
                     bug.velX = 0
 
             screen.blit(bug.image, bug.rect)
-
+       
         screen.blit(self.container_image, self.container_image_rect)
 
     def loadBugs(self, data):
