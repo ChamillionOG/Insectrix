@@ -19,6 +19,8 @@ def create_new_save():
     data = {
         "bugs": 0,
         "max_bugs": 3,
+        "spawn_rate": 1,
+        "currency": 0,
         "bugnet": "wooden",
         "enviroment": "forest",
         "sellPlan": "free",

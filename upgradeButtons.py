@@ -87,7 +87,9 @@ class UpgradeManager:
                     if button.one_time:
                         self.data["purchases"][button.name] = True
                         self.buttons.remove(button)
-                        print("bought 1 time")
+                    else:
+                        button.price = round(button.price * 1.5)
+                        button.price_text = button.font.render(f"{button.price} Insectra", True, (240, 240, 240))
                     self.reorder_buttons(pygame.display.get_surface().get_width())
                     save_data(self.data)
                 else: # --- Can't Afford Upgrade

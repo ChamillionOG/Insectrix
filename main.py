@@ -85,7 +85,8 @@ def main():
         UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, True, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
         UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}medium_jar_icon.png"), "Medium Jar", 2, font, True, effect=lambda v: v.__setitem__("container", create_container_data("medium_jar", v["container"]))),
         UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}truck_icon.png"), "Basic Plan", 3, font, True, effect=lambda v: v.__setitem__("sellPlan", "basic")),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}pollen_icon.png"), "Pollen Bottle", 4, font, False, effect=lambda v: v.__setitem__("spawn_rate", round(v["spawn_rate"] + 0.05, 2)))
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}pollen_icon.png"), "Pollen Bottle", 4, font, False, effect=lambda v: v.__setitem__("spawn_rate", round(v["spawn_rate"] + 0.05, 2))),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}spraycan_icon.png"), "Florescent Spray", 5, font, False, effect=lambda v: v.__setitem__("max_bugs", v["max_bugs"] + 1))
     ]
 
     for button in buttons_list:
@@ -144,10 +145,13 @@ def main():
 
         ##[ -- Currency Text -- ]##
 
-        if display_currency < data["currency"]:
-            display_currency += 1
-        elif display_currency > data["currency"]:
-            display_currency -= 1
+        difference = data["currency"] - display_currency
+        step = max(1, abs(difference) // 10)
+
+        if difference > 0:
+            display_currency += step
+        elif difference < 0:
+            display_currency -= step
 
         currency_text = currency_font.render(f"{display_currency} Insectra", True, (255, 255, 255))
         shadow = currency_font.render(f"{display_currency} Insectra", True, (0, 0, 0))
@@ -155,10 +159,14 @@ def main():
         screen.blit(shadow, (currency_rect.x + 3, currency_rect.y + 3))
         screen.blit(currency_text, currency_rect)
         
+        ##[ -- Display --]##
+
         pygame.display.flip()
         clock.tick(60)
 
     pygame.quit()
+
+##[ -- Initiate Game --]##
 
 if __name__ == "__main__":
     main()
