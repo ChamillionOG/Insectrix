@@ -146,6 +146,7 @@ def main():
         ##[ -- Currency Text -- ]##
 
         difference = data["currency"] - display_currency
+        last_currency = None
         step = max(1, abs(difference) // 10)
 
         if difference > 0:
@@ -153,8 +154,11 @@ def main():
         elif difference < 0:
             display_currency -= step
 
-        currency_text = currency_font.render(f"{display_currency} Insectra", True, (255, 255, 255))
-        shadow = currency_font.render(f"{display_currency} Insectra", True, (0, 0, 0))
+        if display_currency != last_currency:
+            currency_text = currency_font.render(f"{display_currency} Insectra", True, (255, 255, 255))
+            shadow = currency_font.render(f"{display_currency} Insectra", True, (0, 0, 0))
+            last_currency = display_currency
+        
         currency_rect = currency_text.get_rect(midtop=(screen_width // 2, 10))
         screen.blit(shadow, (currency_rect.x + 3, currency_rect.y + 3))
         screen.blit(currency_text, currency_rect)
@@ -162,7 +166,6 @@ def main():
         ##[ -- Display --]##
 
         pygame.display.flip()
-        clock.tick(60)
 
     pygame.quit()
 

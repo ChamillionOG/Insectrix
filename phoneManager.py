@@ -47,7 +47,7 @@ class PhoneManager:
 
         self.image = self.phone_off
         self.rect = self.image.get_rect(bottomright=(screen_width, screen_height + 400))
-        self.speed = 1000
+        self.speed = 1500
         self.offY = screen_height + 400
         self.onY = screen_height
         self.targetY = self.offY

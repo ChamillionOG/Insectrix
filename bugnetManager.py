@@ -7,8 +7,9 @@ cursor_icon = pygame.transform.scale(cursor_icon, (64, 64))
 cursor_icon_rect = cursor_icon.get_rect()
 
 class BugnetManager():
-    def __init__(self, image, rect):
-        self.image = image
+    def __init__(self, bugnet_type, rect):
+        self.bugnet_type = bugnet_type
+        self.load_bugnet(bugnet_type)
         self.rect = rect
 
         self.angle = 0
@@ -18,6 +19,13 @@ class BugnetManager():
         self.swinging = False
         self.returning = False
         self.visible = True
+
+    def load_bugnet(self, bugnet_type):
+        loaded_image = pygame.image.load(f"assets/images/bugnets/{bugnet_type}.png").convert_alpha()
+        loaded_image = pygame.transform.scale(loaded_image, (256, 256))
+
+        self.base_image = loaded_image
+        self.image = self.base_image
 
     def can_swing(self, data):
         current_time = pygame.time.get_ticks() / 1000
@@ -32,8 +40,9 @@ class BugnetManager():
             self.last_swing_time = pygame.time.get_ticks() / 1000
 
     def update(self, screen, mouse, data):
-        self.image = pygame.image.load(f"assets/images/bugnets/{data["bugnet"]}.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (256, 256))
+        if data["bugnet"] != self.bugnet_type:
+            self.bugnet_type = data["bugnet"]
+            self.load_bugnet(self.bugnet_type)
 
         if self.swinging:
             self.angle += self.swing_speed
@@ -47,7 +56,7 @@ class BugnetManager():
                 self.angle = 0
                 self.returning = False
 
-        self.image = pygame.transform.rotate(self.image, self.angle)
+        self.image = pygame.transform.rotate(self.base_image, self.angle)
 
         mouseX, mouseY = mouse.get_pos()
         self.rect = self.image.get_rect()

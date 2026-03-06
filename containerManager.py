@@ -30,6 +30,10 @@ class ContainerManager:
             self.refreshBugs()
 
         for i, bug in enumerate(self.in_container_bugs):
+            if bug.velX == 0 and bug.velY == 0:
+                screen.blit(bug.image, bug.rect)
+                continue
+
             container_floor = (self.container_image_rect.bottom - (i + 1) * ((100 // self.container_data["capacity"]) * 4) - self.container_data["offset"])
 
             bug.velY += bug.gravity
