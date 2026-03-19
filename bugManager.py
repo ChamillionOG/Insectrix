@@ -1,5 +1,7 @@
 import pygame
 import random
+import json
+import math
 
 from savesManager import save_data
 from dictionaries.bugDictionaries import bug_dictionaries
@@ -10,18 +12,25 @@ class Bug:
         self.image = pygame.image.load(bug_dictionaries[bug_type]["image"]).convert_alpha()
         self.image = pygame.transform.scale(self.image, (128, 128))
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.movementX = random.choice([-7, 7])
-        self.velX = random.uniform(-5.5, 5.5)
-        self.type = bug_type
-        self.gravity = 1.2
-        self.velY = 0
 
+        self.direction = random.choice([-1, 1])
+        self.speed = 3
+
+        self.base_y = y
+        self.amplitude = 50 # Higher = More Motion
+        self.frequency = 0.05 # Smaller = Closer Waves
+        self.var = 0
+ 
     def update(self, screen_width, screen):
-        self.rect.x += self.movementX
-        
+
+        self.rect.x += self.direction * self.speed
+
         if self.rect.left <= 0 or self.rect.right >= screen_width:
-            self.movementX *= -1
-        
+            self.direction *= -1
+
+        self.var += 1
+        self.rect.y = self.base_y + int(self.amplitude * math.sin(self.frequency * self.var))
+
         screen.blit(self.image, self.rect)
 
 class BugManager:

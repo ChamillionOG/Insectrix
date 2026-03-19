@@ -36,7 +36,6 @@ class ContainerManager:
 
             container_floor = (self.container_image_rect.bottom - (i + 1) * ((100 // self.container_data["capacity"]) * 4) - self.container_data["offset"])
 
-            bug.velY += bug.gravity
             bug.rect.y += bug.velY
             bug.rect.x += bug.velX
 

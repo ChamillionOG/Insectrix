@@ -1,8 +1,8 @@
 {
-    "bugs": 4,
+    "bugs": 8,
     "max_bugs": 3,
     "spawn_rate": 1,
-    "currency": 28,
+    "currency": 40,
     "bugnet": "sturdy",
     "enviroment": "forest",
     "sellPlan": "free",
@@ -11,8 +11,8 @@
         "capacity": 10,
         "offset": 15,
         "bugs": {
-            "monarch_butterfly": 3,
-            "bee": 1
+            "monarch_butterfly": 5,
+            "bee": 3
         }
     },
     "purchases": {

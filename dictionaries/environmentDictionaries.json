@@ -1,0 +1,12 @@
+{
+    "forest": {
+        "multiplier": 1,
+        "requirement": null,
+        "Cost": null,
+        
+        "bugs": [
+            "monarch_butterfly",
+            "bee"
+        ]
+    }
+}

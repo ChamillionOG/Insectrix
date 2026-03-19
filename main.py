@@ -5,19 +5,37 @@
 import pygame
 
 from dictionaries.containerDictionaries import container_dictionaries
+from dictionaries.enviromentDictionaries import enviroment_dictionaries
 from upgradeButtons import UpgradeManager, UpgradeButton
-from containerManager import ContainerManager
+from containerHandler import ContainerManager
+from popupHandler import PopupTextManager
 from bugnetManager import BugnetManager
-from popupText import PopupTextManager
+from bugHandler import BugManager, Bug
 from phoneManager import PhoneManager
 from savesManager import load_data
-from bugManager import BugManager
 
 #[------------]#
 #[----DATA----]#
 #[------------]#
 
 data = load_data()
+
+default_data = {
+    "bugs": 0,
+    "max_bugs": 3,
+    "spawn_rate": 1,
+    "currency": 0,
+    "bugnet": "wooden",
+    "enviroment": "forest",
+    "sellPlan": "free",
+    "container": {
+        "type": "small_jar",
+        "capacity": 10,
+        "offset": 15,
+        "bugs": {}
+    },
+    "purchases": {}
+}
 
 print(f"Save Data: {data}")
 
@@ -53,13 +71,13 @@ def main():
     ##[ -- Manager Handlers -- ]##
 
     popup_manager = PopupTextManager()                                                              # --- Popup Manager
-    container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data) # --- Container Manager
+    container_manager = ContainerManager(data["container"], screen_height, in_container_bugs, data, Bug) # --- Container Manager
     phone_manager = PhoneManager(screen_width, screen_height, container_manager, data, "off")       # --- Phone Manager
-    bug_manager = BugManager(data["enviroment"], on_screen_bugs, in_container_bugs, popup_manager)  # --- Bug Manager
+    bug_manager = BugManager(data["enviroment"], enviroment_dictionaries, on_screen_bugs, in_container_bugs, popup_manager)  # --- Bug Manager
     bugnet_manager = BugnetManager(data["bugnet"], (0, 0))                                          # --- Bugnet Manager
     upgrade_manager = UpgradeManager(25, -55, popup_manager, data)                                  # --- Upgrade Button Manager
 
-    container_manager.loadBugs(data)
+    container_manager.loadBugs()
 
     ##[ -- Button Information -- ]##
 
@@ -82,11 +100,11 @@ def main():
         }
 
     buttons_list = [
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 1, font, True, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}medium_jar_icon.png"), "Medium Jar", 2, font, True, effect=lambda v: v.__setitem__("container", create_container_data("medium_jar", v["container"]))),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}truck_icon.png"), "Basic Plan", 3, font, True, effect=lambda v: v.__setitem__("sellPlan", "basic")),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}pollen_icon.png"), "Pollen Bottle", 4, font, False, effect=lambda v: v.__setitem__("spawn_rate", round(v["spawn_rate"] + 0.05, 2))),
-        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}spraycan_icon.png"), "Florescent Spray", 5, font, False, effect=lambda v: v.__setitem__("max_bugs", v["max_bugs"] + 1))
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}sturdy_bugnet_icon.png"),  "Sturdy Bugnet", 20, font, True, effect=lambda v: v.__setitem__("bugnet", "sturdy")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}medium_jar_icon.png"), "Medium Jar", 90, font, True, effect=lambda v: v.__setitem__("container", create_container_data("medium_jar", v["container"]))),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}truck_icon.png"), "Basic Plan", 75, font, True, effect=lambda v: v.__setitem__("sellPlan", "basic")),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}pollen_icon.png"), "Pollen Bottle", 100, font, False, effect=lambda v: v.__setitem__("spawn_rate", round(v["spawn_rate"] + 0.05, 2))),
+        UpgradeButton(0, 0, 300, 200, frame_image, pygame.image.load(f"{upgrade_icons_path}spraycan_icon.png"), "Florescent Spray", 150, font, False, effect=lambda v: v.__setitem__("max_bugs", v["max_bugs"] + 1))
     ]
 
     for button in buttons_list:
@@ -114,11 +132,12 @@ def main():
 
         screen.blit(enviroment_background, (0, 0))
         dt = clock.tick(60) / 1000
-        spawn_timer += dt * 1000
 
         ##[ -- Bug Spawning -- ]##
 
         spawn_delay = base_spawn_delay / data["spawn_rate"]
+
+        spawn_timer += dt * 1000
 
         if spawn_timer >= spawn_delay and len(on_screen_bugs) < data["max_bugs"]:
             bug_manager.spawn_bug(screen_width, screen_height)
