@@ -10,11 +10,12 @@ from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
 from popupHandler import PopupText
-from savesManager import load_game
 
 #[------------]#
 #[----DATA----]#
 #[------------]#
+
+from savesManager import load_game, save_game
 
 default_data = {
     "bugs": 0,
@@ -53,6 +54,9 @@ with open("dictionaries/containerDictionaries.json", "r") as f:
 
 spawn_timer = 0
 base_spawn_delay = 1000
+
+autosave_timer = 0
+autosave_interval = 15000
 
 popups = []
 screen_bugs = []
@@ -128,18 +132,31 @@ cursor_icon_rect = cursor_icon.get_rect()
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            save_game(data)
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, font, PopupText)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSLASH:
+                data = default_data.copy()
+                save_game(data)
+                popups.append(PopupText((screen_width / 2, screen_height /2), "DATA WIPED", font("Regular", 50), (255, 0, 0)))
+
+                container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+                bugnet_manager.load_bugnet(load_scaled)
 
     dt = clock.tick(60) / 1000
 
-    spawn_delay = base_spawn_delay / data["spawn_rate"]
+    spawn_delay = base_spawn_delay * data["spawn_rate"]
     spawn_timer += dt * 1000
-
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
         bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
+
+    autosave_timer += dt * 1000
+    if autosave_timer >= autosave_interval:
+        save_game(data)
+        autosave_timer = 0
 
     for popup in popups[:]:
         popup.update(scale)

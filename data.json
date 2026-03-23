@@ -1,18 +1,18 @@
 {
-    "bugs": 0,
+    "bugs": 1,
     "max_bugs": 3,
-    "spawn_rate": 3,
-    "currency": 40,
-    "bugnet": "sturdy",
+    "spawn_rate": 1,
+    "currency": 0,
+    "bugnet": "wooden",
     "environment": "forest",
     "sellPlan": "free",
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "Monarch Butterfly": 1
+        }
     },
-    "purchases": {
-        "Sturdy Bugnet": true
-    }
+    "purchases": {}
 }
