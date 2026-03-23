@@ -9,8 +9,8 @@ class Bug:
 
         self.name = self.bug_data["name"]
         self.image = load_scaled(self.bug_data["image"], 128, 128)
-        self.amplitude = self.bug_data["amplitude"]
-        self.frequency = self.bug_data["frequency"]
+        self.amplitude = self.bug_data["amplitude"] # Higher = More Motion
+        self.frequency = self.bug_data["frequency"] # Smaller = Closer Waves
         self.speed = self.bug_data["speed"]
         self.weight = self.bug_data["weight"]
 
@@ -61,37 +61,37 @@ class BugManager:
 
         bug_data = self.bugs_list[bug_key]
 
-        x = random.randint(0, screen_width - 128)
-        y = random.randint(0, screen_height - 128)
+        x = random.randint(128, screen_width - 128)
+        y = random.randint(128, screen_height - 128)
 
         bug = Bug((x, y), load_scaled, bug_data)
 
         screen_bugs.append(bug)
 
-    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, popup_manager):
+    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popup_manager=None):
         if not bugnet_manager.can_swing(time):
             return False
-        
-        mouseX, mouseY = pygame.mouse.get_pos()
 
-        for bug in self.screen_bugs:
+        bugnet_manager.swing(time)
+
+        for bug in screen_bugs[:]:
             if bug.rect.collidepoint(pos):
                 if data["bugs"] < data["container"]["capacity"]:
-                    self.screen_bugs.remove(bug)
-                    bug.rect.midtop = (container_rect.centerx, container_rect.top + 20)
+                    screen_bugs.remove(bug)
 
+                    bug.rect.midtop = (container_rect.centerx, container_rect.top + 20)
                     self.container_bugs.append(bug)
 
                     bugs = data["container"]["bugs"]
                     bugs[bug.name] = bugs.get(bug.name, 0) + 1
-                    bug_name = bug.name
 
                     data["bugs"] += 1
 
                     return True
-                elif data["bugs"] == data["container"]["capacity"]:
-                    #popup
-                    pass
+                else:
+                    return False
+
+        return False
 
     def draw(self, screen_width, screen_bugs, screen):
         for bug in screen_bugs:

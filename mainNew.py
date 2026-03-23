@@ -7,6 +7,7 @@ import json
 
 from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
+from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
 from savesManager import load_game
 
@@ -36,6 +37,9 @@ data = load_game(default_data)
 with open("dictionaries/bugDictionaries.json", "r") as f:
     bugs_list = json.load(f)
 
+with open("dictionaries/bugnetDictionaries.json", "r") as f:
+    bugnets_list = json.load(f)
+
 with open("dictionaries/environmentDictionaries.json", "r") as f:
     environments_list = json.load(f)
 
@@ -60,7 +64,7 @@ clock = pygame.time.Clock()
 
 pygame.init()
 pygame.font.init()
-pygame.mouse.set_visible(True)
+pygame.mouse.set_visible(False)
 pygame.display.set_caption("Insectrix")
 pygame.display.set_icon(pygame.image.load("assets/images/gameIcon.png"))
 
@@ -96,6 +100,7 @@ def load_scaled(path, width, height):
 environment_manager = EnvironmentManager((screen_width, screen_height), data)
 container_manager = ContainerManager(data["container"]["type"], containers_list, screen, container_bugs, data)
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
+bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 
 #[---------------]#
 #[----RUNNING----]#
@@ -104,14 +109,23 @@ bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, e
 running = True
 
 container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+bugnet_manager.load_bugnet(load_scaled)
+
+current_container = data["container"]["type"]
+current_bugnet = data["bugnet"]
 
 static_surface = pygame.Surface((screen_width, screen_height))
 static_surface.blit(environment_manager.image, (0, 0))
+
+cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 64, 64)
+cursor_icon_rect = cursor_icon.get_rect()
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs)
 
     dt = clock.tick(60) / 1000
 
@@ -122,9 +136,18 @@ while running:
         bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
 
+    new_container = data["container"]["type"]
+    new_bugnet = data["bugnet"]
+
+    if current_container != new_container:
+        container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+    elif current_bugnet != new_bugnet:
+        bugnet_manager.load_bugnet(load_scaled)
+
     screen.blit(static_surface, (0, 0))
     screen.blit(container_manager.image, container_manager.rect)
 
+    bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen)
 
     pygame.display.flip()

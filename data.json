@@ -1,7 +1,7 @@
 {
-    "bugs": 8,
+    "bugs": 0,
     "max_bugs": 3,
-    "spawn_rate": 1,
+    "spawn_rate": 3,
     "currency": 40,
     "bugnet": "sturdy",
     "environment": "forest",
@@ -10,10 +10,7 @@
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {
-            "monarch_butterfly": 5,
-            "bee": 3
-        }
+        "bugs": {}
     },
     "purchases": {
         "Sturdy Bugnet": true
