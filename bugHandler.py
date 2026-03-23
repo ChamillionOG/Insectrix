@@ -22,14 +22,14 @@ class Bug:
         self.velX = random.uniform(-2.5, 2.5)
         self.velY = 0
 
-    def draw(self, screen, screen_width):
-        self.rect.x += self.direction * self.speed
+    def draw(self, scale, screen, screen_width):
+        self.rect.x += self.direction * (self.speed * scale)
 
         if self.rect.left <= 0 or self.rect.right >= screen_width:
             self.direction *= -1
 
         self.var += 1
-        self.rect.y = self.base_y + int(self.amplitude * math.sin(self.frequency * self.var))
+        self.rect.y = self.base_y + (int(self.amplitude * math.sin(self.frequency * self.var)) * scale)
 
         screen.blit(self.image, self.rect)
     
@@ -68,7 +68,7 @@ class BugManager:
 
         screen_bugs.append(bug)
 
-    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popup_manager=None):
+    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popups, font, PopupText):
         if not bugnet_manager.can_swing(time):
             return False
 
@@ -87,12 +87,14 @@ class BugManager:
 
                     data["bugs"] += 1
 
+                    popups.append(PopupText(pos, f"+1 {bug.name}", font("Regular", 30), (255, 255, 255)))
+
                     return True
                 else:
-                    return False
+                    popups.append(PopupText(pos, "Full Container!", font("Regular", 30), (255, 0, 0)))
 
         return False
 
-    def draw(self, screen_width, screen_bugs, screen):
+    def draw(self, screen_width, screen_bugs, screen, scale):
         for bug in screen_bugs:
-            bug.draw(screen, screen_width)
+            bug.draw(scale, screen, screen_width)

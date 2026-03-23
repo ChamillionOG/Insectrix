@@ -9,6 +9,7 @@ from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
+from popupHandler import PopupText
 from savesManager import load_game
 
 #[------------]#
@@ -53,6 +54,7 @@ with open("dictionaries/containerDictionaries.json", "r") as f:
 spawn_timer = 0
 base_spawn_delay = 1000
 
+popups = []
 screen_bugs = []
 container_bugs = []
 
@@ -93,6 +95,9 @@ def load_scaled(path, width, height):
     image = pygame.image.load(path).convert_alpha()
     return pygame.transform.scale(image, (sx(width), sy(height)))
 
+def font(name, size):
+    return pygame.font.Font(f"assets/fonts/{name}.ttf", sx(size))
+
 #[----------------]#
 #[----MANAGERS----]#
 #[----------------]#
@@ -125,7 +130,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs)
+            bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, font, PopupText)
 
     dt = clock.tick(60) / 1000
 
@@ -135,6 +140,11 @@ while running:
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
         bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
+
+    for popup in popups[:]:
+        popup.update(scale)
+        if popup.dead():
+            popups.remove(popup)
 
     new_container = data["container"]["type"]
     new_bugnet = data["bugnet"]
@@ -148,6 +158,9 @@ while running:
     screen.blit(container_manager.image, container_manager.rect)
 
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
-    bug_manager.draw(screen_width, screen_bugs, screen)
+    bug_manager.draw(screen_width, screen_bugs, screen, scale)
+
+    for popup in popups:
+        popup.draw(screen)
 
     pygame.display.flip()
