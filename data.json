@@ -4,7 +4,7 @@
     "spawn_rate": 1,
     "currency": 40,
     "bugnet": "sturdy",
-    "enviroment": "forest",
+    "environment": "forest",
     "sellPlan": "free",
     "container": {
         "type": "small_jar",

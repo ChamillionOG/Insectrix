@@ -8,7 +8,7 @@ class Bug:
         self.bug_data = bug_data
 
         self.name = self.bug_data["name"]
-        self.image = self.bug_data["image"]
+        self.image = pygame.image.load(self.bug_data["image"])
         self.amplitude = self.bug_data["amplitude"]
         self.frequency = self.bug_data["frequency"]
         self.speed = self.bug_data["speed"]
@@ -34,10 +34,10 @@ class Bug:
         screen.blit(self.image, self.rect)
     
 class BugManager:
-    def __init__(self, current_environment, on_screen_bugs, in_container_bugs, popup_manager, bugs_list, enviroments_list):
+    def __init__(self, current_environment, screen_bugs, container_bugs, popup_manager, bugs_list, enviroments_list):
         self.current_environment = current_environment
-        self.on_screen_bugs = on_screen_bugs
-        self.in_container_bugs = in_container_bugs
+        self.screen_bugs = screen_bugs
+        self.container_bugs = container_bugs
         self.popup_manager = popup_manager
         self.bugs_list = bugs_list
         self.environments_list = enviroments_list
@@ -46,7 +46,7 @@ class BugManager:
 
     def clear_bugs(self):
         if self.current_environment != self.previous_environment:
-            self.on_screen_bugs.clear()
+            self.screen_bugs.clear()
             self.previous_environment = self.current_environment
 
     def pick_bug(self):
@@ -67,7 +67,7 @@ class BugManager:
 
         bug = Bug((x, y), bug_data)
 
-        self.on_screen_bugs.append(bug)
+        self.screen_bugs.append(bug)
 
     def collect_bug(self, pos, time, data, container_rect, bugnet_manager, popup_manager):
         if not bugnet_manager.can_swing(time):
@@ -75,13 +75,13 @@ class BugManager:
         
         mouseX, mouseY = pygame.mouse.get_pos()
 
-        for bug in self.on_screen_bugs:
+        for bug in self.screen_bugs:
             if bug.rect.collidepoint(pos):
                 if data["bugs"] < data["container"]["capacity"]:
-                    self.on_screen_bugs.remove(bug)
+                    self.screen_bugs.remove(bug)
                     bug.rect.midtop = (container_rect.centerx, container_rect.top + 20)
 
-                    self.in_container_bugs.append(bug)
+                    self.container_bugs.append(bug)
 
                     bugs = data["container"]["bugs"]
                     bugs[bug.name] = bugs.get(bug.name, 0) + 1
@@ -95,5 +95,5 @@ class BugManager:
                     pass
 
     def draw(self, screen_width, screen):
-        for bug in self.on_screen_bugs:
+        for bug in self.screen_bugs:
             bug.draw(screen, screen_width)
