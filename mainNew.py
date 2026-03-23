@@ -68,8 +68,26 @@ pygame.display.set_icon(pygame.image.load("assets/images/gameIcon.png"))
 #[----DISPLAY----]#
 #[---------------]#
 
+BASE_WIDTH = 2560
+BASE_HEIGHT = 1440
+
 screen = pygame.display.set_mode((0, 0), pygame.NOFRAME)
 screen_width, screen_height = screen.get_size()
+
+scale_x = screen_width / BASE_WIDTH
+scale_y = screen_height / BASE_HEIGHT
+
+scale = min(scale_x, scale_y)
+
+def sx(x): return int(x * scale)
+def sy(y): return int(y * scale)
+
+def scale_position(x, y):
+    return sx(x), sy(y)
+
+def load_scaled(path, width, height):
+    image = pygame.image.load(path).convert_alpha()
+    return pygame.transform.scale(image, (sx(width), sy(height)))
 
 #[----------------]#
 #[----MANAGERS----]#
@@ -85,7 +103,7 @@ bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, e
 
 running = True
 
-container_manager.load_container(container_bugs, data)
+container_manager.load_container(container_bugs, load_scaled, scale_position, data)
 
 static_surface = pygame.Surface((screen_width, screen_height))
 static_surface.blit(environment_manager.image, (0, 0))
@@ -101,7 +119,7 @@ while running:
     spawn_timer += dt * 1000
 
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
-        bug_manager.spawn_bug(screen_width, screen_height, screen_bugs)
+        bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
 
     screen.blit(static_surface, (0, 0))

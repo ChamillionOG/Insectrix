@@ -3,13 +3,12 @@ import random
 import math
 
 class Bug:
-    def __init__(self, position, bug_data):
+    def __init__(self, position, load_scaled, bug_data):
         self.x, self.y = position
         self.bug_data = bug_data
 
         self.name = self.bug_data["name"]
-        self.image = pygame.image.load(self.bug_data["image"]).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (128, 128))
+        self.image = load_scaled(self.bug_data["image"], 128, 128)
         self.amplitude = self.bug_data["amplitude"]
         self.frequency = self.bug_data["frequency"]
         self.speed = self.bug_data["speed"]
@@ -57,7 +56,7 @@ class BugManager:
 
         return random.choices(bug_keys, weights=weights, k=1)[0]
 
-    def spawn_bug(self, screen_width, screen_height, screen_bugs):
+    def spawn_bug(self, screen_width, screen_height, screen_bugs, load_scaled):
         bug_key = self.pick_bug()
 
         bug_data = self.bugs_list[bug_key]
@@ -65,7 +64,7 @@ class BugManager:
         x = random.randint(0, screen_width - 128)
         y = random.randint(0, screen_height - 128)
 
-        bug = Bug((x, y), bug_data)
+        bug = Bug((x, y), load_scaled, bug_data)
 
         screen_bugs.append(bug)
 

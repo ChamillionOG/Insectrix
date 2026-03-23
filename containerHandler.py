@@ -10,14 +10,14 @@ class ContainerManager:
         self.container_name = self.current_container
         self.container_data = self.containers_list[self.current_container]
 
-    def load_container(self, container_bugs, data):
-        image = pygame.image.load(f"assets/images/containers/{self.container_name}.png").convert_alpha()
-        image = pygame.transform.scale(image, (300, 520))
+    def load_container(self, container_bugs, load_scaled, scale_position, data):
+        image = load_scaled(f"assets/images/containers/{self.container_name}.png", 300, 520)
 
         self.original_image = image
         self.image = image
         self.rect = image.get_rect()
-        self.rect.bottomleft = (20, 1060)
+
+        self.rect.bottomleft = scale_position(20, 1420)
 
         self.load_bugs(container_bugs, data)
 
