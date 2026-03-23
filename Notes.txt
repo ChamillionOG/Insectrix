@@ -37,3 +37,7 @@ Popup Requirements:
 - Alpha fades out
 - Slides up when fading
 - Holds popups in table
+
+Container Values:
+ImageSize
+Position

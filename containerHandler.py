@@ -12,15 +12,14 @@ class ContainerManager:
 
     def load_container(self, container_bugs, data):
         image = pygame.image.load(f"assets/images/containers/{self.container_name}.png").convert_alpha()
-        image = pygame.transform.scale(image, (640, 640))
+        image = pygame.transform.scale(image, (300, 520))
 
         self.original_image = image
         self.image = image
         self.rect = image.get_rect()
+        self.rect.bottomleft = (20, 1060)
 
         self.load_bugs(container_bugs, data)
-
-        self.screen.blit(self.image, self.rect)
 
     def load_bugs(self, container_bugs, data):
         container_bugs.clear()

@@ -60,7 +60,7 @@ clock = pygame.time.Clock()
 
 pygame.init()
 pygame.font.init()
-pygame.mouse.set_visible(False)
+pygame.mouse.set_visible(True)
 pygame.display.set_caption("Insectrix")
 pygame.display.set_icon(pygame.image.load("assets/images/gameIcon.png"))
 
@@ -77,7 +77,7 @@ screen_width, screen_height = screen.get_size()
 
 environment_manager = EnvironmentManager((screen_width, screen_height), data)
 container_manager = ContainerManager(data["container"]["type"], containers_list, screen, container_bugs, data)
-bug_manager = BugManager(data["environment"], screen_bugs, container_bugs, None, bugs_list, environments_list)
+bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 
 #[---------------]#
 #[----RUNNING----]#
@@ -85,8 +85,10 @@ bug_manager = BugManager(data["environment"], screen_bugs, container_bugs, None,
 
 running = True
 
-screen.blit(environment_manager.image, (0, 0))
 container_manager.load_container(container_bugs, data)
+
+static_surface = pygame.Surface((screen_width, screen_height))
+static_surface.blit(environment_manager.image, (0, 0))
 
 while running:
     for event in pygame.event.get():
@@ -99,9 +101,12 @@ while running:
     spawn_timer += dt * 1000
 
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
-        bug_manager.spawn_bug(screen_width, screen_height)
+        bug_manager.spawn_bug(screen_width, screen_height, screen_bugs)
         spawn_timer = 0
 
-    bug_manager.draw(screen_width, screen)
+    screen.blit(static_surface, (0, 0))
+    screen.blit(container_manager.image, container_manager.rect)
+
+    bug_manager.draw(screen_width, screen_bugs, screen)
 
     pygame.display.flip()

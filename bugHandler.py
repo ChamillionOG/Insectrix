@@ -8,7 +8,8 @@ class Bug:
         self.bug_data = bug_data
 
         self.name = self.bug_data["name"]
-        self.image = pygame.image.load(self.bug_data["image"])
+        self.image = pygame.image.load(self.bug_data["image"]).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (128, 128))
         self.amplitude = self.bug_data["amplitude"]
         self.frequency = self.bug_data["frequency"]
         self.speed = self.bug_data["speed"]
@@ -34,9 +35,8 @@ class Bug:
         screen.blit(self.image, self.rect)
     
 class BugManager:
-    def __init__(self, current_environment, screen_bugs, container_bugs, popup_manager, bugs_list, enviroments_list):
+    def __init__(self, current_environment, container_bugs, popup_manager, bugs_list, enviroments_list):
         self.current_environment = current_environment
-        self.screen_bugs = screen_bugs
         self.container_bugs = container_bugs
         self.popup_manager = popup_manager
         self.bugs_list = bugs_list
@@ -44,9 +44,9 @@ class BugManager:
 
         self.previous_environment = current_environment
 
-    def clear_bugs(self):
+    def clear_bugs(self, screen_bugs):
         if self.current_environment != self.previous_environment:
-            self.screen_bugs.clear()
+            screen_bugs.clear()
             self.previous_environment = self.current_environment
 
     def pick_bug(self):
@@ -57,7 +57,7 @@ class BugManager:
 
         return random.choices(bug_keys, weights=weights, k=1)[0]
 
-    def spawn_bug(self, screen_width, screen_height):
+    def spawn_bug(self, screen_width, screen_height, screen_bugs):
         bug_key = self.pick_bug()
 
         bug_data = self.bugs_list[bug_key]
@@ -67,7 +67,7 @@ class BugManager:
 
         bug = Bug((x, y), bug_data)
 
-        self.screen_bugs.append(bug)
+        screen_bugs.append(bug)
 
     def collect_bug(self, pos, time, data, container_rect, bugnet_manager, popup_manager):
         if not bugnet_manager.can_swing(time):
@@ -94,6 +94,6 @@ class BugManager:
                     #popup
                     pass
 
-    def draw(self, screen_width, screen):
-        for bug in self.screen_bugs:
+    def draw(self, screen_width, screen_bugs, screen):
+        for bug in screen_bugs:
             bug.draw(screen, screen_width)
