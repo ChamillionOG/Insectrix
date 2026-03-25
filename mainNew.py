@@ -112,6 +112,21 @@ bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, e
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 
 #[---------------]#
+#[----OPTIONS----]#
+#[---------------]#
+
+options_button = load_scaled("assets/ui/options_button.png", 70, 70)
+options_button_rect = options_button.get_rect()
+options_button_rect.topleft = scale_position(15, 15)
+
+options_open = False
+
+def draw_options():
+    options_background_rect = pygame.Rect(sx(10), sy(100), sx(200), sy(400))
+    pygame.draw.rect(screen, (70, 70, 70), options_background_rect)
+    return options_background_rect
+
+#[---------------]#
 #[----RUNNING----]#
 #[---------------]#
 
@@ -130,12 +145,20 @@ cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 64, 64)
 cursor_icon_rect = cursor_icon.get_rect()
 
 while running:
+    mouse_pos = pygame.mouse.get_pos()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             save_game(data)
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
+
+            if options_button_rect.collidepoint(mouse_pos) and not options_open:
+                options_open = True
+            elif options_button_rect.collidepoint(mouse_pos) and options_open:
+                options_open = False
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSLASH:
                 data = default_data.copy()
@@ -146,7 +169,6 @@ while running:
                 bugnet_manager.load_bugnet(load_scaled)
 
     dt = clock.tick(60) / 1000
-
     spawn_delay = base_spawn_delay * data["spawn_rate"]
 
     if len(screen_bugs) != data["max_bugs"]:
@@ -174,8 +196,14 @@ while running:
     elif current_bugnet != new_bugnet:
         bugnet_manager.load_bugnet(load_scaled)
 
+    options_hovering = options_button_rect.collidepoint(mouse_pos)
+
     screen.blit(static_surface, (0, 0))
     screen.blit(container_manager.image, container_manager.rect)
+    screen.blit(options_button, options_button_rect)
+    options_background_rect = None
+    if options_open:
+        options_background_rect = draw_options()
 
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
@@ -187,5 +215,11 @@ while running:
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
     screen.blit(fps_text, scale_position(10, 10))
+    
+    if options_hovering or (options_background_rect and options_background_rect.collidepoint(mouse_pos)):
+        bugnet_manager.visible = False
+    else:
+        bugnet_manager.visible = True
+
 
     pygame.display.flip()

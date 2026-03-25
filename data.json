@@ -1,5 +1,5 @@
 {
-    "bugs": 0,
+    "bugs": 10,
     "max_bugs": 3,
     "spawn_rate": 5,
     "currency": 0,
@@ -10,7 +10,10 @@
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "bee": 4,
+            "monarch_butterfly": 6
+        }
     },
     "purchases": {}
 }
