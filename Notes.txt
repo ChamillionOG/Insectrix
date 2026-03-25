@@ -2,7 +2,7 @@ Reworks Checklist:
 
 [X] BugHandler
 --->
-[ ] ContainerHandler
+[X] ContainerHandler
 --->
 [X] popupHandler
 --->
@@ -13,31 +13,8 @@ Reworks Checklist:
 Ideas:
 - Item requirement to unlock bug
 - Unique button design for enviroment
-- Periodic Saving
-- Save on game quit
-
-Bug Requirements:
-- Bug Type
-- Position
-- Direction
-- Speed
-- Sine Wave
-- Variable Frequency & Amplitude
-
-BugManager:
-- Onscreenbugs
-- incontainerbugs
-- PopupManager
-- Current Environment
-- Clear on environment change
-- Spawn Bug
-- Collect Bug
-
-Popup Requirements:
-- Alpha fades out
-- Slides up when fading
-- Holds popups in table
+- Bugnet requirement for bug
 
 Container Values:
-ImageSize
-Position
+- ImageSize
+- Position

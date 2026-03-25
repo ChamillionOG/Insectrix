@@ -1,19 +1,21 @@
 {
     "monarch_butterfly": {
+        "key": "monarch_butterfly",
         "name": "Monarch Butterfly",
         "image": "assets/images/bugs/monarchButterfly.png",
         "amplitude": 50,
         "frequency": 0.05,
-        "speed": 3,
+        "speed": 4,
         "weight": 70
     },
 
     "bee": {
+        "key": "bee",
         "name": "Bee",
         "image": "assets/images/bugs/bee.png",
         "amplitude": 25,
         "frequency": 0.025,
-        "speed": 2,
+        "speed": 2.5,
         "weight": 30
     }
 }

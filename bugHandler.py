@@ -7,6 +7,7 @@ class Bug:
         self.x, self.y = position
         self.bug_data = bug_data
 
+        self.key = self.bug_data["key"]
         self.name = self.bug_data["name"]
         self.image = load_scaled(self.bug_data["image"], 128, 128)
         self.amplitude = self.bug_data["amplitude"] # Higher = More Motion
@@ -19,17 +20,57 @@ class Bug:
         self.base_y = self.y
         self.var = 0
 
+        self.in_container = False
+        self.targetY = None
         self.velX = random.uniform(-2.5, 2.5)
         self.velY = 0
 
-    def draw(self, scale, screen, screen_width):
-        self.rect.x += self.direction * (self.speed * scale)
+    def draw(self, scale, screen, screen_width, container_rect=None):
+        if not self.in_container:
+            # Regular Side to Side Movement
+            self.rect.x += self.direction * (self.speed * scale)
 
-        if self.rect.left <= 0 or self.rect.right >= screen_width:
-            self.direction *= -1
+            if self.rect.left <= 0 or self.rect.right >= screen_width:
+                self.direction *= -1
 
-        self.var += 1
-        self.rect.y = self.base_y + (int(self.amplitude * math.sin(self.frequency * self.var)) * scale)
+            self.var += 1
+            self.rect.y = self.base_y + (int(self.amplitude * math.sin(self.frequency * self.var)) * scale)
+
+            screen.blit(self.image, self.rect)
+        else:
+            # Container Physics
+            gravity = 0.4 * scale
+            air_resistance = 0.999
+            bounce_damping = 0.4
+            ground_friction = 0.85
+
+            self.velY += gravity
+
+            self.velX *= air_resistance
+            self.velY *= air_resistance
+
+            self.rect.x += self.velX
+            self.rect.y += self.velY
+
+            if self.rect.left <= container_rect.left:
+                self.rect.left = container_rect.left
+                self.velX *= -0.7
+
+            if self.rect.right >= container_rect.right:
+                self.rect.right = container_rect.right
+                self.velX *= -0.7
+
+            if self.targetY is not None and self.rect.bottom >= self.targetY:
+                self.rect.bottom = self.targetY
+
+                self.velY *= -bounce_damping
+                self.velX *= ground_friction
+
+                if abs(self.velY) < 0.3:
+                    self.velY = 0
+
+                if abs(self.velX) < 0.1:
+                    self.velX = 0
 
         screen.blit(self.image, self.rect)
     
@@ -58,7 +99,6 @@ class BugManager:
 
     def spawn_bug(self, screen_width, screen_height, screen_bugs, load_scaled):
         bug_key = self.pick_bug()
-
         bug_data = self.bugs_list[bug_key]
 
         x = random.randint(128, screen_width - 128)
@@ -68,7 +108,7 @@ class BugManager:
 
         screen_bugs.append(bug)
 
-    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popups, font, PopupText):
+    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText):
         if not bugnet_manager.can_swing(time):
             return False
 
@@ -80,10 +120,21 @@ class BugManager:
                     screen_bugs.remove(bug)
 
                     bug.rect.midtop = (container_rect.centerx, container_rect.top + 20)
+                    bug.in_container = True
+                    bug.velY = 0
+                    bug.velX = random.uniform(-2.5, 2.5)
+
                     self.container_bugs.append(bug)
 
+                    capacity = data["container"]["capacity"]
+                    inner_height = container_rect.height - (125 * scale)
+                    spacing = inner_height / capacity
+
+                    for i, b in enumerate(self.container_bugs):
+                        b.targetY = container_rect.bottom - (i * spacing)
+
                     bugs = data["container"]["bugs"]
-                    bugs[bug.name] = bugs.get(bug.name, 0) + 1
+                    bugs[bug.key] = bugs.get(bug.key, 0) + 1
 
                     data["bugs"] += 1
 

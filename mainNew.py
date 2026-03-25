@@ -20,7 +20,7 @@ from savesManager import load_game, save_game
 default_data = {
     "bugs": 0,
     "max_bugs": 3,
-    "spawn_rate": 1,
+    "spawn_rate": 5,
     "currency": 0,
     "bugnet": "wooden",
     "environment": "forest",
@@ -117,7 +117,7 @@ bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 
 running = True
 
-container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
 bugnet_manager.load_bugnet(load_scaled)
 
 current_container = data["container"]["type"]
@@ -135,20 +135,23 @@ while running:
             save_game(data)
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, font, PopupText)
+            bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSLASH:
                 data = default_data.copy()
                 save_game(data)
                 popups.append(PopupText((screen_width / 2, screen_height /2), "DATA WIPED", font("Regular", 50), (255, 0, 0)))
 
-                container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+                container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
                 bugnet_manager.load_bugnet(load_scaled)
 
     dt = clock.tick(60) / 1000
 
     spawn_delay = base_spawn_delay * data["spawn_rate"]
-    spawn_timer += dt * 1000
+
+    if len(screen_bugs) != data["max_bugs"]:
+        spawn_timer += dt * 1000
+
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
         bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
@@ -167,7 +170,7 @@ while running:
     new_bugnet = data["bugnet"]
 
     if current_container != new_container:
-        container_manager.load_container(container_bugs, load_scaled, scale_position, data)
+        container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
     elif current_bugnet != new_bugnet:
         bugnet_manager.load_bugnet(load_scaled)
 
@@ -176,8 +179,13 @@ while running:
 
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
+    container_manager.draw(container_bugs, screen, scale, screen_width)
 
     for popup in popups:
         popup.draw(screen)
+
+    fps = clock.get_fps()
+    fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
+    screen.blit(fps_text, scale_position(10, 10))
 
     pygame.display.flip()

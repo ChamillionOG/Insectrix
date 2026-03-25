@@ -10,7 +10,7 @@ class ContainerManager:
         self.container_name = self.current_container
         self.container_data = self.containers_list[self.current_container]
 
-    def load_container(self, container_bugs, load_scaled, scale_position, data):
+    def load_container(self, container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data):
         image = load_scaled(f"assets/images/containers/{self.container_name}.png", 300, 520)
 
         self.original_image = image
@@ -19,26 +19,45 @@ class ContainerManager:
 
         self.rect.bottomleft = scale_position(20, 1420)
 
-        self.load_bugs(container_bugs, data)
+        self.load_bugs(container_bugs, load_scaled, bugs_list, scale, Bug, data)
 
-    def load_bugs(self, container_bugs, data):
+    def load_bugs(self, container_bugs, load_scaled, bugs_list, scale, Bug, data):
         container_bugs.clear()
 
-        for bug, amount in data["container"]["bugs"].items():
+        for bug_key, amount in data["container"]["bugs"].items():
+            bug_data = bugs_list[bug_key]
+
             for _ in range(amount):
-                #self.add_bug(bug)
-                pass
+                self.add_bug(container_bugs, bug_data, load_scaled, Bug)
 
-    #def add_bug(self, container_bugs, bug_type, CreateBug):
-       # x = self.rect.centerx - 50
-       # y = self.rect.top + 20
+        capacity = data["container"]["capacity"]
 
-       # bug = CreateBug(x, y, bug_type)
+        inner_rect = self.rect
+        inner_height = inner_rect.height - (125 * scale)
+        spacing = inner_height / capacity
 
-       # bug.velX = random.uniform(-2.5, 2.5)
-       # bug.velY = 0
+        for i, bug in enumerate(container_bugs):
+            bug.targetY = inner_rect.bottom - (i * spacing)
 
-        #container_bugs.append(bug)
+            bug.rect.bottom = bug.targetY
+            bug.velY = 0
 
-    def draw(self):
-        pass
+    def add_bug(self, container_bugs, bug_data, load_scaled, Bug):
+        x = self.rect.centerx
+        y = self.rect.top
+
+        bug = Bug((x, y), load_scaled,  bug_data)
+
+        bug.in_container = True
+        bug.velX = random.uniform(-2.5, 2.5)
+        bug.velY = 0
+
+        container_bugs.append(bug)
+
+    def draw(self, container_bugs, screen, scale, screen_width):
+        inner_rect = self.rect.inflate(int(-10 * scale), int(-10 * scale))
+
+        for bug in container_bugs:
+            bug.draw(scale, screen, screen_width, inner_rect)
+
+        screen.blit(self.image, self.rect)
