@@ -31,6 +31,11 @@ default_data = {
         "offset": 15,
         "bugs": {}
     },
+    "settings": {
+        "sound_effects": True,
+        "popups": True,
+        "music": True
+    },
     "purchases": {}
 }
 
@@ -116,18 +121,64 @@ bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 #[---------------]#
 
 options_button = load_scaled("assets/ui/options_button.png", 70, 70)
-options_button_rect = options_button.get_rect()
-options_button_rect.topleft = scale_position(15, 15)
+options_button_rect = options_button.get_rect(topleft=scale_position(15, 15))
 
 options_open = False
+current_frame = None
 
-def draw_options():
-    image = load_scaled("assets/ui/options_frame.png", 325, 475)
-    rect = image.get_rect()
-    rect.topleft = (sx(10), sy(100))
+stats_button = load_scaled("assets/ui/stats_button.png", 70, 70)
+stats_rect = stats_button.get_rect(topleft=scale_position(15, 100))
 
-    screen.blit(image, rect)
-    return rect
+settings_button = load_scaled("assets/ui/settings_button.png", 70, 70)
+settings_rect = settings_button.get_rect(topleft=scale_position(15, 185))
+
+quit_button = load_scaled("assets/ui/quit_button.png", 70, 70)
+quit_rect = quit_button.get_rect(topleft=scale_position(15, 270))
+
+options_frame = load_scaled("assets/ui/options_frame.png", 325, 475)
+options_frame_rect = options_frame.get_rect(topleft=scale_position(95, 15))
+
+def load_stats():
+    title = font("ThinBold", 35).render("Stats", False, (255, 255, 255))
+    max_bugs_text = font("Regular", 20).render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
+    spawn_rate_text = font("Regular", 20).render(f"Spawn Rate: {data["spawn_rate"]}(s)", True, (255, 255, 255))
+    bugnet_text = font("Regular", 20).render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
+    environment_text = font("Regular", 20).render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
+    sell_plan_text = font("Regular", 20).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
+    container_text = font("Regular", 20).render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
+    capacity_text = font("Regular", 20).render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
+
+    screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
+    screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
+    screen.blit(spawn_rate_text, spawn_rate_text.get_rect(center=scale_position(257.5, 150)))
+    screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 180)))
+    screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 210)))
+    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 240)))
+    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 270)))
+    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 300)))
+
+def load_settings():
+    title = font("ThinBold", 35).render("Settings", False, (255, 255, 255))
+
+    if data["settings"]["sound_effects"]:
+        sound_effects_button = font("Regular", 20).render("Sound Effects: ENABLED", True, (0, 255, 0))
+    else:
+        sound_effects_button = font("Regular", 20).render("Sound Effects: DISABLED", True, (255, 0, 0))
+
+    if data["settings"]["popups"]:
+        popups_button = font("Regular", 20).render("PopUps: ENABLED", True, (0, 255, 0))
+    else:
+        popups_button = font("Regular", 20).render("PopUps: DISABLED", True, (255, 0, 0))
+
+    if data["settings"]["music"]:
+        music_button = font("Regular", 20).render("Music: ENABLED", True, (0, 255, 0))
+    else:
+        music_button = font("Regular", 20).render("Music: DISABLED", True, (255, 0, 0))
+
+    screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
+    screen.blit(sound_effects_button, sound_effects_button.get_rect(center=scale_position(257.5, 130)))
+    screen.blit(popups_button, popups_button.get_rect(center=scale_position(257.5, 170)))
+    screen.blit(music_button, music_button.get_rect(center=scale_position(257.5, 210)))
 
 #[---------------]#
 #[----RUNNING----]#
@@ -205,9 +256,6 @@ while running:
     screen.blit(container_manager.image, container_manager.rect)
     
     screen.blit(options_button, options_button_rect)
-    options_background_rect = None
-    if options_open:
-        options_background_rect = draw_options()
 
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
@@ -219,8 +267,15 @@ while running:
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
     screen.blit(fps_text, scale_position(10, 10))
+    screen.blit(options_frame, options_frame_rect)
+    load_settings()
+
+    if options_open:
+        screen.blit(stats_button, stats_rect)
+        screen.blit(settings_button, settings_rect)
+        screen.blit(quit_button, quit_rect)
     
-    if options_hovering or (options_background_rect and options_background_rect.collidepoint(mouse_pos)):
+    if options_hovering:
         bugnet_manager.visible = False
     else:
         bugnet_manager.visible = True

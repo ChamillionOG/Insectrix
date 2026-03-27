@@ -15,9 +15,7 @@ class ContainerManager:
 
         self.original_image = image
         self.image = image
-        self.rect = image.get_rect()
-
-        self.rect.bottomleft = scale_position(20, 1420)
+        self.rect = image.get_rect(bottomleft=scale_position(20, 1420))
 
         self.load_bugs(container_bugs, load_scaled, bugs_list, scale, Bug, data)
 

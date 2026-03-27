@@ -27,17 +27,11 @@ class PopupText:
                 self.alpha = 0
 
     def draw(self, screen):
-        surf = self.font.render(self.text, False, self.color)
+        text = self.font.render(self.text, False, self.color)
 
-        surf = pygame.transform.scale(
-            surf,
-            (
-                int(surf.get_width() * self.scale),
-                int(surf.get_height() * self.scale)
-            )
-        )
+        text = pygame.transform.scale(text, (int(text.get_width() * self.scale), int(text.get_height() * self.scale)))
 
-        surf.set_alpha(self.alpha)
+        text.set_alpha(self.alpha)
 
-        rect = surf.get_rect(center=(self.x, self.y))
-        screen.blit(surf, rect)
+        rect = text.get_rect(center=(self.x, self.y))
+        screen.blit(text, rect)
