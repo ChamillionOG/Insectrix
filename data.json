@@ -11,8 +11,8 @@
         "capacity": 10,
         "offset": 15,
         "bugs": {
-            "bee": 4,
-            "monarch_butterfly": 6
+            "bee": 2,
+            "monarch_butterfly": 8
         }
     },
     "purchases": {}

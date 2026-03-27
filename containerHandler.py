@@ -49,7 +49,7 @@ class ContainerManager:
         bug = Bug((x, y), load_scaled,  bug_data)
 
         bug.in_container = True
-        bug.velX = random.uniform(-2.5, 2.5)
+        bug.velX = random.uniform(-5, 5)
         bug.velY = 0
 
         container_bugs.append(bug)

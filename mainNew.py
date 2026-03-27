@@ -122,9 +122,12 @@ options_button_rect.topleft = scale_position(15, 15)
 options_open = False
 
 def draw_options():
-    options_background_rect = pygame.Rect(sx(10), sy(100), sx(200), sy(400))
-    pygame.draw.rect(screen, (70, 70, 70), options_background_rect)
-    return options_background_rect
+    image = load_scaled("assets/ui/options_frame.png", 325, 475)
+    rect = image.get_rect()
+    rect.topleft = (sx(10), sy(100))
+
+    screen.blit(image, rect)
+    return rect
 
 #[---------------]#
 #[----RUNNING----]#
@@ -200,6 +203,7 @@ while running:
 
     screen.blit(static_surface, (0, 0))
     screen.blit(container_manager.image, container_manager.rect)
+    
     screen.blit(options_button, options_button_rect)
     options_background_rect = None
     if options_open:
@@ -220,6 +224,5 @@ while running:
         bugnet_manager.visible = False
     else:
         bugnet_manager.visible = True
-
 
     pygame.display.flip()
