@@ -24,7 +24,7 @@ default_data = {
     "currency": 0,
     "bugnet": "wooden",
     "environment": "forest",
-    "sellPlan": "free",
+    "sell_plan": "free",
     "container": {
         "type": "small_jar",
         "capacity": 10,
@@ -140,13 +140,13 @@ options_frame_rect = options_frame.get_rect(topleft=scale_position(95, 15))
 
 def load_stats():
     title = font("ThinBold", 35).render("Stats", False, (255, 255, 255))
-    max_bugs_text = font("Regular", 20).render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
-    spawn_rate_text = font("Regular", 20).render(f"Spawn Rate: {data["spawn_rate"]}(s)", True, (255, 255, 255))
-    bugnet_text = font("Regular", 20).render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
-    environment_text = font("Regular", 20).render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
-    sell_plan_text = font("Regular", 20).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
-    container_text = font("Regular", 20).render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
-    capacity_text = font("Regular", 20).render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
+    max_bugs_text = font("Regular", 18).render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
+    spawn_rate_text = font("Regular", 18).render(f"Spawn Rate: {data["spawn_rate"]} (s)", True, (255, 255, 255))
+    bugnet_text = font("Regular", 18).render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
+    environment_text = font("Regular", 18).render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
+    sell_plan_text = font("Regular", 18).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
+    container_text = font("Regular", 18).render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
+    capacity_text = font("Regular", 18).render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
 
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
@@ -161,19 +161,19 @@ def load_settings():
     title = font("ThinBold", 35).render("Settings", False, (255, 255, 255))
 
     if data["settings"]["sound_effects"]:
-        sound_effects_button = font("Regular", 20).render("Sound Effects: ENABLED", True, (0, 255, 0))
+        sound_effects_button = font("Regular", 18).render("Sound Effects: ENABLED", True, (0, 255, 0))
     else:
-        sound_effects_button = font("Regular", 20).render("Sound Effects: DISABLED", True, (255, 0, 0))
+        sound_effects_button = font("Regular", 18).render("Sound Effects: DISABLED", True, (255, 0, 0))
 
     if data["settings"]["popups"]:
-        popups_button = font("Regular", 20).render("PopUps: ENABLED", True, (0, 255, 0))
+        popups_button = font("Regular", 18).render("PopUps: ENABLED", True, (0, 255, 0))
     else:
-        popups_button = font("Regular", 20).render("PopUps: DISABLED", True, (255, 0, 0))
+        popups_button = font("Regular", 18).render("PopUps: DISABLED", True, (255, 0, 0))
 
     if data["settings"]["music"]:
-        music_button = font("Regular", 20).render("Music: ENABLED", True, (0, 255, 0))
+        music_button = font("Regular", 18).render("Music: ENABLED", True, (0, 255, 0))
     else:
-        music_button = font("Regular", 20).render("Music: DISABLED", True, (255, 0, 0))
+        music_button = font("Regular", 18).render("Music: DISABLED", True, (255, 0, 0))
 
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(sound_effects_button, sound_effects_button.get_rect(center=scale_position(257.5, 130)))
@@ -198,6 +198,10 @@ static_surface.blit(environment_manager.image, (0, 0))
 cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 64, 64)
 cursor_icon_rect = cursor_icon.get_rect()
 
+clickable_rects = [
+    ("options", options_button_rect)
+]
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
 
@@ -212,6 +216,19 @@ while running:
                 options_open = True
             elif options_button_rect.collidepoint(mouse_pos) and options_open:
                 options_open = False
+            elif stats_rect.collidepoint(mouse_pos):
+                if current_frame == None or current_frame == "settings":
+                    current_frame = "stats"
+                else:
+                    current_frame = None
+            elif settings_rect.collidepoint(mouse_pos):
+                if current_frame == None or current_frame == "stats":
+                    current_frame = "settings"
+                else:
+                    current_frame = None
+            elif quit_rect.collidepoint(mouse_pos):
+                save_game(data)
+                running = False
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSLASH:
@@ -250,12 +267,33 @@ while running:
     elif current_bugnet != new_bugnet:
         bugnet_manager.load_bugnet(load_scaled)
 
-    options_hovering = options_button_rect.collidepoint(mouse_pos)
-
     screen.blit(static_surface, (0, 0))
     screen.blit(container_manager.image, container_manager.rect)
     
     screen.blit(options_button, options_button_rect)
+
+    if options_open:
+        screen.blit(stats_button, stats_rect)
+        screen.blit(settings_button, settings_rect)
+        screen.blit(quit_button, quit_rect)
+
+        clickable_rects.extend([
+            ("options_frame", options_frame_rect),
+            ("stats", stats_rect),
+            ("settings", settings_rect),
+            ("quit", quit_rect)
+        ])
+    else:
+        current_frame = None
+        clickable_rects = [("options", options_button_rect)]
+
+    if current_frame != None:
+        screen.blit(options_frame, options_frame_rect)
+
+    if current_frame == "stats":
+        load_stats()
+    if current_frame == "settings":
+        load_settings()
 
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
@@ -267,17 +305,7 @@ while running:
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
     screen.blit(fps_text, scale_position(10, 10))
-    screen.blit(options_frame, options_frame_rect)
-    load_settings()
-
-    if options_open:
-        screen.blit(stats_button, stats_rect)
-        screen.blit(settings_button, settings_rect)
-        screen.blit(quit_button, quit_rect)
     
-    if options_hovering:
-        bugnet_manager.visible = False
-    else:
-        bugnet_manager.visible = True
+    bugnet_manager.visible = not any(rect.collidepoint(mouse_pos) for name, rect in clickable_rects)
 
     pygame.display.flip()
