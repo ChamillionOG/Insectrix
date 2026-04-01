@@ -26,7 +26,10 @@ class PopupText:
             if self.alpha < 0:
                 self.alpha = 0
 
-    def draw(self, screen):
+    def draw(self, screen, data):
+        if not data["settings"]["popups"]:
+            return
+        
         text = self.font.render(self.text, False, self.color)
 
         text = pygame.transform.scale(text, (int(text.get_width() * self.scale), int(text.get_height() * self.scale)))

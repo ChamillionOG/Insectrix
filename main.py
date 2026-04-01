@@ -175,10 +175,23 @@ def load_settings():
     else:
         music_button = font("Regular", 18).render("Music: DISABLED", True, (255, 0, 0))
 
-    screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
-    screen.blit(sound_effects_button, sound_effects_button.get_rect(center=scale_position(257.5, 130)))
-    screen.blit(popups_button, popups_button.get_rect(center=scale_position(257.5, 170)))
-    screen.blit(music_button, music_button.get_rect(center=scale_position(257.5, 210)))
+    title_rect = title.get_rect(center=scale_position(257.5, 80))
+    sound_effects_rect = sound_effects_button.get_rect(center=scale_position(257.5, 130))
+    popups_rect = popups_button.get_rect(center=scale_position(257.5, 170))
+    music_rect = music_button.get_rect(center=scale_position(257.5, 210))
+
+    screen.blit(title, title_rect)
+    screen.blit(sound_effects_button, sound_effects_rect)
+    screen.blit(popups_button, popups_rect)
+    screen.blit(music_button, music_rect)
+
+    return {
+        "sound_effects": sound_effects_rect,
+        "popups": popups_rect,
+        "music": music_rect
+    }
+
+settings_rects = load_settings()
 
 #[---------------]#
 #[----RUNNING----]#
@@ -226,6 +239,12 @@ while running:
                     current_frame = "settings"
                 else:
                     current_frame = None
+            elif settings_rects["sound_effects"].collidepoint(mouse_pos):
+                data["settings"]["sound_effects"] = not data["settings"]["sound_effects"]
+            elif settings_rects["popups"].collidepoint(mouse_pos):
+                data["settings"]["popups"] = not data["settings"]["popups"]
+            elif settings_rects["music"].collidepoint(mouse_pos):
+                data["settings"]["music"] = not data["settings"]["music"]
             elif quit_rect.collidepoint(mouse_pos):
                 save_game(data)
                 running = False
@@ -300,7 +319,7 @@ while running:
     container_manager.draw(container_bugs, screen, scale, screen_width)
 
     for popup in popups:
-        popup.draw(screen)
+        popup.draw(screen, data)
 
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
