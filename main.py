@@ -10,6 +10,7 @@ from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
 from popupHandler import PopupText
+from upgradesHandler import UpgradeButton
 
 #[------------]#
 #[----DATA----]#
@@ -52,6 +53,9 @@ with open("dictionaries/environmentDictionaries.json", "r") as f:
 
 with open("dictionaries/containerDictionaries.json", "r") as f:
     containers_list = json.load(f)
+
+with open("dictionaries/upgradeDictionaries.json", "r") as f:
+    upgrades_list = json.load(f)
 
 #[-----------------]#
 #[----VARIABLES----]#
@@ -115,6 +119,8 @@ environment_manager = EnvironmentManager((screen_width, screen_height), data)
 container_manager = ContainerManager(data["container"]["type"], containers_list, screen, container_bugs, data)
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
+
+test_button = UpgradeButton(scale_position(2200, 1140), upgrades_list["upgrades"][1], load_scaled, scale_position, font)
 
 #[---------------]#
 #[----OPTIONS----]#
@@ -192,6 +198,12 @@ def load_settings():
     }
 
 settings_rects = load_settings()
+
+#[----------------]#
+#[----UPGRADES----]#
+#[----------------]#
+
+current_upgrade_page = None
 
 #[---------------]#
 #[----RUNNING----]#
@@ -326,5 +338,7 @@ while running:
     screen.blit(fps_text, scale_position(10, 10))
     
     bugnet_manager.visible = not any(rect.collidepoint(mouse_pos) for name, rect in clickable_rects)
+
+    test_button.draw(screen)
 
     pygame.display.flip()

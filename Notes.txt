@@ -18,3 +18,8 @@ Ideas:
 Container Values:
 - ImageSize
 - Position
+
+Upgrade Requirements:
+- Position
+- Name (Should apply name of upgrade and icon image)
+- Offset (Default offest * amount of upgrades)

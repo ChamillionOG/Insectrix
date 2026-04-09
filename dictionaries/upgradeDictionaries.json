@@ -1,0 +1,21 @@
+{
+    "upgrades": [
+        {
+            "name": "Pollen Bottle",
+            "icon": "assets/images/upgradeIcons/pollen_icon.png",
+            "cost": 5,
+            "data": "spawn_rate",
+            "amount": "pollen_bought",
+            "one_time": false
+        },
+
+        {
+            "name": "Test",
+            "icon": "assets/images/upgradeIcons/pollen_icon.png",
+            "cost": 1,
+            "data": "spawn_rate",
+            "amount": "pollen_bought",
+            "one_time": false
+        }
+    ]
+}
