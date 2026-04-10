@@ -1,5 +1,5 @@
 {
-    "bugs": 5,
+    "bugs": 10,
     "max_bugs": 3,
     "spawn_rate": 5,
     "currency": 0,
@@ -11,12 +11,12 @@
         "capacity": 10,
         "offset": 15,
         "bugs": {
-            "bee": 2,
-            "monarch_butterfly": 3
+            "bee": 3,
+            "monarch_butterfly": 7
         }
     },
     "settings": {
-        "sound_effects": true,
+        "sound_effects": false,
         "popups": true,
         "music": true
     },

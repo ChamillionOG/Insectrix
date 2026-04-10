@@ -120,7 +120,7 @@ container_manager = ContainerManager(data["container"]["type"], containers_list,
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 
-test_button = UpgradeButton(scale_position(2200, 1140), upgrades_list["upgrades"][1], load_scaled, scale_position, font)
+test_button = UpgradeButton(scale_position(2335, 50), upgrades_list["upgrades"][0], load_scaled, font)
 
 #[---------------]#
 #[----OPTIONS----]#
@@ -203,6 +203,8 @@ settings_rects = load_settings()
 #[----UPGRADES----]#
 #[----------------]#
 
+DEFAULT_Y = screen_height + sy(100)
+
 current_upgrade_page = None
 
 #[---------------]#
@@ -220,7 +222,7 @@ current_bugnet = data["bugnet"]
 static_surface = pygame.Surface((screen_width, screen_height))
 static_surface.blit(environment_manager.image, (0, 0))
 
-cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 64, 64)
+cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 48, 48)
 cursor_icon_rect = cursor_icon.get_rect()
 
 clickable_rects = [
@@ -326,6 +328,8 @@ while running:
     if current_frame == "settings":
         load_settings()
 
+    test_button.draw(screen, data)
+
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
     container_manager.draw(container_bugs, screen, scale, screen_width)
@@ -336,9 +340,7 @@ while running:
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
     screen.blit(fps_text, scale_position(10, 10))
-    
-    bugnet_manager.visible = not any(rect.collidepoint(mouse_pos) for name, rect in clickable_rects)
 
-    test_button.draw(screen)
+    bugnet_manager.visible = not any(rect.collidepoint(mouse_pos) for name, rect in clickable_rects)
 
     pygame.display.flip()
