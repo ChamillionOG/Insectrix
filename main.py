@@ -5,12 +5,12 @@
 import pygame
 import json
 
+from upgradesHandler import UpgradeButton, UpgradeManager
 from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
 from popupHandler import PopupText
-from upgradesHandler import UpgradeButton
 
 #[------------]#
 #[----DATA----]#
@@ -20,11 +20,13 @@ from savesManager import load_game, save_game
 
 default_data = {
     "bugs": 0,
-    "max_bugs": 3,
+    "max_bugs": 1,
     "spawn_rate": 5,
     "currency": 0,
     "bugnet": "wooden",
     "environment": "forest",
+    "sprays_bought": 0,
+    "pollen_bought": 0,
     "sell_plan": "free",
     "container": {
         "type": "small_jar",
@@ -35,7 +37,8 @@ default_data = {
     "settings": {
         "sound_effects": True,
         "popups": True,
-        "music": True
+        "music": True,
+        "fps": False,
     },
     "purchases": {}
 }
@@ -70,6 +73,7 @@ autosave_interval = 15000
 popups = []
 screen_bugs = []
 container_bugs = []
+upgrade_buttons = []
 
 clock = pygame.time.Clock()
 
@@ -116,11 +120,10 @@ def font(name, size):
 #[----------------]#
 
 environment_manager = EnvironmentManager((screen_width, screen_height), data)
-container_manager = ContainerManager(data["container"]["type"], containers_list, screen, container_bugs, data)
+container_manager = ContainerManager(data["container"]["type"], containers_list, screen)
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
-
-test_button = UpgradeButton(scale_position(2335, 50), upgrades_list["upgrades"][0], load_scaled, font)
+upgrade_manager = UpgradeManager(sy(63), sx(2335), sy(123))
 
 #[---------------]#
 #[----OPTIONS----]#
@@ -181,20 +184,28 @@ def load_settings():
     else:
         music_button = font("Regular", 18).render("Music: DISABLED", True, (255, 0, 0))
 
+    if data["settings"]["fps"]:
+        fps_button = font("Regular", 18).render("FPS: ENABLED", True, (0, 255, 0))
+    else:
+        fps_button = font("Regular", 18).render("FPS: DISABLED", True, (255, 0, 0))
+
     title_rect = title.get_rect(center=scale_position(257.5, 80))
     sound_effects_rect = sound_effects_button.get_rect(center=scale_position(257.5, 130))
     popups_rect = popups_button.get_rect(center=scale_position(257.5, 170))
     music_rect = music_button.get_rect(center=scale_position(257.5, 210))
+    fps_rect = fps_button.get_rect(center=scale_position(257.5, 250))
 
     screen.blit(title, title_rect)
     screen.blit(sound_effects_button, sound_effects_rect)
     screen.blit(popups_button, popups_rect)
     screen.blit(music_button, music_rect)
+    screen.blit(fps_button, fps_rect)
 
     return {
         "sound_effects": sound_effects_rect,
         "popups": popups_rect,
-        "music": music_rect
+        "music": music_rect,
+        "fps": fps_rect
     }
 
 settings_rects = load_settings()
@@ -203,9 +214,10 @@ settings_rects = load_settings()
 #[----UPGRADES----]#
 #[----------------]#
 
-DEFAULT_Y = screen_height + sy(100)
+for upgrade in upgrades_list["upgrades"]:
+    upgrade_buttons.append(UpgradeButton(scale_position(2335, 50), upgrade, load_scaled, font, scale, data))
 
-current_upgrade_page = None
+upgrade_manager.organize_buttons(upgrade_buttons)
 
 #[---------------]#
 #[----RUNNING----]#
@@ -238,6 +250,7 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
+            upgrade_manager.clicked(upgrade_buttons, mouse_pos, data, scale, popups, font, PopupText)
 
             if options_button_rect.collidepoint(mouse_pos) and not options_open:
                 options_open = True
@@ -259,6 +272,8 @@ while running:
                 data["settings"]["popups"] = not data["settings"]["popups"]
             elif settings_rects["music"].collidepoint(mouse_pos):
                 data["settings"]["music"] = not data["settings"]["music"]
+            elif settings_rects["fps"].collidepoint(mouse_pos):
+                data["settings"]["fps"] = not data ["settings"]["fps"]
             elif quit_rect.collidepoint(mouse_pos):
                 save_game(data)
                 running = False
@@ -328,8 +343,7 @@ while running:
     if current_frame == "settings":
         load_settings()
 
-    test_button.draw(screen, data)
-
+    upgrade_manager.draw(upgrade_buttons, screen, data)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
     container_manager.draw(container_bugs, screen, scale, screen_width)
@@ -339,8 +353,13 @@ while running:
 
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
-    screen.blit(fps_text, scale_position(10, 10))
+    if data["settings"]["fps"]:
+        screen.blit(fps_text, scale_position(1280, 10))
 
-    bugnet_manager.visible = not any(rect.collidepoint(mouse_pos) for name, rect in clickable_rects)
+    hovering_ui = any(rect.collidepoint(mouse_pos) for _, rect in clickable_rects)
+    bugnet_manager.visible = not hovering_ui
+
+    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos):
+        bugnet_manager.visible = False
 
     pygame.display.flip()

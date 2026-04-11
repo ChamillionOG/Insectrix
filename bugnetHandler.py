@@ -97,7 +97,7 @@ class BugnetManager:
         mouseX, mouseY = pygame.mouse.get_pos()
         rotated_image = pygame.transform.rotate(self.original_image, total_angle)
 
-        if not self.visible:
+        if self.visible:
             self.rect = rotated_image.get_rect(center=(mouseX, mouseY + 60))
             screen.blit(rotated_image, self.rect)
         else:

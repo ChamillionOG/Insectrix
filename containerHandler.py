@@ -2,7 +2,7 @@ import pygame
 import random
 
 class ContainerManager:
-    def __init__(self, current_container, containers_list, screen, container_bugs, data):
+    def __init__(self, current_container, containers_list, screen):
         self.current_container = current_container
         self.containers_list = containers_list
         self.screen = screen

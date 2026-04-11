@@ -10,11 +10,11 @@
         },
 
         {
-            "name": "Test",
-            "icon": "assets/images/upgradeIcons/pollen_icon.png",
-            "cost": 1,
-            "data": "spawn_rate",
-            "amount": "pollen_bought",
+            "name": "Florescent Spray",
+            "icon": "assets/images/upgradeIcons/spraycan_icon.png",
+            "cost": 10,
+            "data": "max_bugs",
+            "amount": "sprays_bought",
             "one_time": false
         }
     ]
