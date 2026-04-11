@@ -31,7 +31,7 @@ class BugnetManager:
         self.rect = None
 
     def load_bugnet(self, load_scaled):
-        image = load_scaled(f"assets/images/bugnets/{self.bugnet_name}.png", 256, 256)
+        image = load_scaled(f"assets/images/bugnets/{self.bugnet_name}.png", 180, 180)
         self.original_image = image
         self.image = image
 
@@ -81,7 +81,7 @@ class BugnetManager:
         if abs(dx) < 0.5:
             self.angle *= (1 - self.return_speed)
 
-    def draw(self, screen, data, cursor_icon, cursor_icon_rect):
+    def draw(self, screen, data, cursor_icon, cursor_icon_rect, scale):
         if data["bugnet"] != self.current_bugnet:
             self.current_bugnet = data["bugnet"]
             self.bugnet_name = self.current_bugnet
@@ -98,8 +98,8 @@ class BugnetManager:
         rotated_image = pygame.transform.rotate(self.original_image, total_angle)
 
         if self.visible:
-            self.rect = rotated_image.get_rect(center=(mouseX, mouseY + 60))
+            self.rect = rotated_image.get_rect(center=(mouseX + (10 * scale), mouseY + (40 * scale)))
             screen.blit(rotated_image, self.rect)
         else:
-            cursor_icon_rect.center = (mouseX, mouseY)
+            cursor_icon_rect.center = (mouseX + (10 * scale), mouseY + (10 * scale))
             screen.blit(cursor_icon, cursor_icon_rect)

@@ -10,6 +10,7 @@ from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
+from phoneHandler import PhoneManager
 from popupHandler import PopupText
 
 #[------------]#
@@ -124,6 +125,7 @@ container_manager = ContainerManager(data["container"]["type"], containers_list,
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
 upgrade_manager = UpgradeManager(sy(63), sx(2335), sy(123))
+phone_manager = PhoneManager("off", load_scaled, scale_position)
 
 #[---------------]#
 #[----OPTIONS----]#
@@ -251,6 +253,7 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
             upgrade_manager.clicked(upgrade_buttons, mouse_pos, data, scale, popups, font, PopupText)
+            phone_manager.clicked(mouse_pos)
 
             if options_button_rect.collidepoint(mouse_pos) and not options_open:
                 options_open = True
@@ -344,7 +347,8 @@ while running:
         load_settings()
 
     upgrade_manager.draw(upgrade_buttons, screen, data)
-    bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect)
+    phone_manager.draw(screen, sy)
+    bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
     container_manager.draw(container_bugs, screen, scale, screen_width)
 
@@ -359,7 +363,7 @@ while running:
     hovering_ui = any(rect.collidepoint(mouse_pos) for _, rect in clickable_rects)
     bugnet_manager.visible = not hovering_ui
 
-    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos):
+    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos):
         bugnet_manager.visible = False
 
     pygame.display.flip()
