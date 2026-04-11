@@ -61,6 +61,9 @@ with open("dictionaries/containerDictionaries.json", "r") as f:
 with open("dictionaries/upgradeDictionaries.json", "r") as f:
     upgrades_list = json.load(f)
 
+with open("dictionaries/sellDictionaries.json", "r") as f:
+    sellplans_list = json.load(f)
+
 #[-----------------]#
 #[----VARIABLES----]#
 #[-----------------]#
@@ -77,6 +80,7 @@ container_bugs = []
 upgrade_buttons = []
 
 clock = pygame.time.Clock()
+display_currency = data["currency"]
 
 #[-------------]#
 #[----INIT-----]#
@@ -253,7 +257,7 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
             upgrade_manager.clicked(upgrade_buttons, mouse_pos, data, scale, popups, font, PopupText)
-            phone_manager.clicked(mouse_pos)
+            phone_manager.clicked(mouse_pos, sellplans_list, data)
 
             if options_button_rect.collidepoint(mouse_pos) and not options_open:
                 options_open = True
@@ -289,6 +293,7 @@ while running:
 
                 container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
                 bugnet_manager.load_bugnet(load_scaled)
+                screen_bugs.clear()
 
     dt = clock.tick(60) / 1000
     spawn_delay = base_spawn_delay * data["spawn_rate"]
@@ -347,7 +352,7 @@ while running:
         load_settings()
 
     upgrade_manager.draw(upgrade_buttons, screen, data)
-    phone_manager.draw(screen, sy)
+    phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale)
     bug_manager.draw(screen_width, screen_bugs, screen, scale)
     container_manager.draw(container_bugs, screen, scale, screen_width)
@@ -357,13 +362,32 @@ while running:
 
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
+    fps_rect = fps_text.get_rect(midtop=(screen_width // 2, sy(10)))
     if data["settings"]["fps"]:
-        screen.blit(fps_text, scale_position(1280, 10))
+        screen.blit(fps_text, fps_rect)
 
     hovering_ui = any(rect.collidepoint(mouse_pos) for _, rect in clickable_rects)
     bugnet_manager.visible = not hovering_ui
 
     if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos):
         bugnet_manager.visible = False
+
+    currency_difference = data["currency"] - display_currency
+    last_currency = None
+    step = max(1, abs(currency_difference) // sy(10))
+
+    if currency_difference > 0:
+        display_currency += step
+    elif currency_difference < 0:
+        display_currency -= step
+
+    if display_currency != last_currency:
+        currency_text = font("ThinBold", sx(50)).render(f"{display_currency:,} Insectra", True, (255, 255, 255))
+        shadow_text = font("ThinBold", sx(50)).render(f"{display_currency:,} Insectra", True, (0, 0, 0))
+        last_currency = display_currency
+    
+    currency_rect = currency_text.get_rect(midtop=(screen_width // 2, sy(40)))
+    screen.blit(shadow_text, (currency_rect.x + sx(3), currency_rect.y + sy(3)))
+    screen.blit(currency_text, currency_rect)
 
     pygame.display.flip()

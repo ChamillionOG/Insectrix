@@ -19,7 +19,7 @@ class UpgradeButton:
         self.cover = load_scaled("assets/ui/upgrade_cover_frame.png", 410.4, 125.6)
 
         self.name_text = font("ThinBold", 25).render(f"{self.name}", False, (255, 255, 255))
-        self.cost_text = font("Thin", 20).render(f"{self.cost} Insectra", False, (255, 255, 255))
+        self.cost_text = font("Thin", 20).render(f"{self.cost:,} Insectra", False, (255, 255, 255))
 
         self.rect = self.frame.get_rect(center=(self.x, self.y))
 
@@ -73,7 +73,7 @@ class UpgradeManager:
     
     def update_cost(self, button, font, data):
         button.cost = int(button.base_cost * (1.15 ** data[button.amount]))
-        button.cost_text = font("Thin", 20).render(f"{button.cost} Insectra", False, (255, 255, 255))
+        button.cost_text = font("Thin", 20).render(f"{button.cost:,} Insectra", False, (255, 255, 255))
 
     def clicked(self, buttons, pos, data, scale, popups, font, PopupText):
         for button in buttons:
@@ -91,7 +91,8 @@ class UpgradeManager:
 
                         if button.name == "Pollen Bottle":
                             if data[button.data] > 0:
-                                data[button.data] -= 0.01
+                                data[button.data] -= 0.05
+                                data[button.data] = round(data[button.data], 2)
                         elif button.name == "Florescent Spray":
                             data[button.data] += 1
 
