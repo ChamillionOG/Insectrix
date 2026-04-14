@@ -52,10 +52,10 @@ class ContainerManager:
 
         container_bugs.append(bug)
 
-    def draw(self, container_bugs, screen, scale, screen_width):
+    def draw(self, container_bugs, screen, scale, screen_width, sx):
         inner_rect = self.rect.inflate(int(-10 * scale), int(-10 * scale))
 
         for bug in container_bugs:
-            bug.draw(scale, screen, screen_width, inner_rect)
+            bug.draw(scale, screen, screen_width, sx, inner_rect)
 
         screen.blit(self.image, self.rect)

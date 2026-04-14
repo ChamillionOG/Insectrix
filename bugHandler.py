@@ -25,12 +25,12 @@ class Bug:
         self.velX = random.uniform(-2.5, 2.5)
         self.velY = 0
 
-    def draw(self, scale, screen, screen_width, container_rect=None):
+    def draw(self, scale, screen, screen_width, sx, container_rect=None):
         if not self.in_container:
             # Regular Side to Side Movement
             self.rect.x += self.direction * (self.speed * scale)
 
-            if self.rect.left <= 0 or self.rect.right >= screen_width:
+            if self.rect.left <= sx(5) or self.rect.right >= screen_width - sx(5):
                 self.direction *= -1
 
             self.var += 1
@@ -146,6 +146,6 @@ class BugManager:
 
         return False
 
-    def draw(self, screen_width, screen_bugs, screen, scale):
+    def draw(self, screen_width, screen_bugs, screen, scale, sx):
         for bug in screen_bugs:
-            bug.draw(scale, screen, screen_width)
+            bug.draw(scale, screen, screen_width, sx)

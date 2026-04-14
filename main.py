@@ -120,6 +120,9 @@ def load_scaled(path, width, height):
 def font(name, size):
     return pygame.font.Font(f"assets/fonts/{name}.ttf", sx(size))
 
+last_currency = None
+currency_text_scale = 1.0
+
 #[----------------]#
 #[----MANAGERS----]#
 #[----------------]#
@@ -225,6 +228,20 @@ for upgrade in upgrades_list["upgrades"]:
 
 upgrade_manager.organize_buttons(upgrade_buttons)
 
+current_store = "upgrades"
+
+upgrades_button = load_scaled("assets/ui/small_frame.png", 160, 64)
+upgrades_button_rect = upgrades_button.get_rect(center=(scale_position(2040, 55)))
+
+upgrades_label = font("Regular", sx(20)).render("Upgrades", True, (255, 255, 255))
+upgrades_label_rect = upgrades_label.get_rect(center=(scale_position(2040, 57)))
+
+uniques_button = load_scaled("assets/ui/small_frame.png", 160, 64)
+uniques_button_rect = uniques_button.get_rect(center=(scale_position(2040, 135)))
+
+uniques_label = font("Regular", sx(22)).render("Uniques", True, (255, 255, 255))
+uniques_label_rect = uniques_label.get_rect(center=(scale_position(2040, 137)))
+
 #[---------------]#
 #[----RUNNING----]#
 #[---------------]#
@@ -244,7 +261,9 @@ cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 48, 48)
 cursor_icon_rect = cursor_icon.get_rect()
 
 clickable_rects = [
-    ("options", options_button_rect)
+    ("options", options_button_rect),
+    ("upgrades", upgrades_button_rect),
+    ("uniques", uniques_button_rect)
 ]
 
 while running:
@@ -284,6 +303,10 @@ while running:
             elif quit_rect.collidepoint(mouse_pos):
                 save_game(data)
                 running = False
+            elif uniques_button_rect.collidepoint(mouse_pos) and current_store == "upgrades":
+                current_store = "uniques"
+            elif upgrades_button_rect.collidepoint(mouse_pos) and current_store == "uniques":
+                current_store = "upgrades"
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSLASH:
@@ -337,11 +360,24 @@ while running:
             ("options_frame", options_frame_rect),
             ("stats", stats_rect),
             ("settings", settings_rect),
-            ("quit", quit_rect)
+            ("quit", quit_rect),
+            ("upgrades", upgrades_button_rect),
+            ("uniques", uniques_button_rect)
         ])
     else:
         current_frame = None
-        clickable_rects = [("options", options_button_rect)]
+        clickable_rects = [
+            ("options", options_button_rect),
+            ("upgrades", upgrades_button_rect),
+            ("uniques", uniques_button_rect)
+        ]
+
+    if current_store == "upgrades":
+        upgrades_label = font("Regular", sx(20)).render("Upgrades", True, (25, 255, 25))
+        uniques_label = font("Regular", sx(22)).render("Uniques", True, (255, 255, 255))
+    elif current_store == "uniques":
+        upgrades_label = font("Regular", sx(20)).render("Upgrades", True, (255, 255, 255))
+        uniques_label = font("Regular", sx(22)).render("Uniques", True, (25, 255, 25))
 
     if current_frame != None:
         screen.blit(options_frame, options_frame_rect)
@@ -351,11 +387,17 @@ while running:
     if current_frame == "settings":
         load_settings()
 
-    upgrade_manager.draw(upgrade_buttons, screen, data)
+    screen.blit(upgrades_button, upgrades_button_rect)
+    screen.blit(upgrades_label, upgrades_label_rect)
+
+    screen.blit(uniques_button, uniques_button_rect)
+    screen.blit(uniques_label, uniques_label_rect)
+
+    upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
     phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale)
-    bug_manager.draw(screen_width, screen_bugs, screen, scale)
-    container_manager.draw(container_bugs, screen, scale, screen_width)
+    bug_manager.draw(screen_width, screen_bugs, screen, scale, sx)
+    container_manager.draw(container_bugs, screen, scale, screen_width, sx)
 
     for popup in popups:
         popup.draw(screen, data)
@@ -363,6 +405,7 @@ while running:
     fps = clock.get_fps()
     fps_text = font("Regular", 20).render(f"FPS: {int(fps)}", False, (255, 255, 255))
     fps_rect = fps_text.get_rect(midtop=(screen_width // 2, sy(10)))
+
     if data["settings"]["fps"]:
         screen.blit(fps_text, fps_rect)
 
@@ -373,7 +416,6 @@ while running:
         bugnet_manager.visible = False
 
     currency_difference = data["currency"] - display_currency
-    last_currency = None
     step = max(1, abs(currency_difference) // sy(10))
 
     if currency_difference > 0:
@@ -382,10 +424,14 @@ while running:
         display_currency -= step
 
     if display_currency != last_currency:
-        currency_text = font("ThinBold", sx(50)).render(f"{display_currency:,} Insectra", True, (255, 255, 255))
-        shadow_text = font("ThinBold", sx(50)).render(f"{display_currency:,} Insectra", True, (0, 0, 0))
+        currency_text_scale = 1.4
         last_currency = display_currency
-    
+
+    currency_text_scale += (1.0 - currency_text_scale) * 0.2
+
+    currency_text = font("ThinBold", int(sx(50) * currency_text_scale)).render(f"{display_currency:,} Insectra", True, (255, 255, 255))
+    shadow_text = font("ThinBold", int(sx(50) * currency_text_scale)).render(f"{display_currency:,} Insectra", True, (0, 0, 0))
+
     currency_rect = currency_text.get_rect(midtop=(screen_width // 2, sy(40)))
     screen.blit(shadow_text, (currency_rect.x + sx(3), currency_rect.y + sy(3)))
     screen.blit(currency_text, currency_rect)

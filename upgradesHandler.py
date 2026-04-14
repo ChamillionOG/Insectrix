@@ -23,6 +23,8 @@ class UpgradeButton:
 
         self.rect = self.frame.get_rect(center=(self.x, self.y))
 
+        self.visible = False
+
     def can_afford(self, data):
         return data["currency"] >= self.cost
 
@@ -69,6 +71,8 @@ class UpgradeManager:
             y += self.padding
     
     def is_hovering(self, buttons, pos):
+        for button in buttons: 
+            if not button.visible: return
         return any(button.rect.collidepoint(pos) for button in buttons)
     
     def update_cost(self, button, font, data):
@@ -77,6 +81,7 @@ class UpgradeManager:
 
     def clicked(self, buttons, pos, data, scale, popups, font, PopupText):
         for button in buttons:
+            if not button.visible: return
             if button.clicked(pos):
                 if button.can_afford(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255)))
@@ -100,6 +105,11 @@ class UpgradeManager:
                 else:
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Can't Afford!", font("Regular", 30), (255, 0, 0)))
 
-    def draw(self, buttons, screen, data):
-        for button in reversed(buttons):
-            button.draw(screen, data)
+    def draw(self, upgrades, screen, data, current_page):
+        if current_page == "upgrades":
+            for upgrade in reversed(upgrades):
+                upgrade.draw(screen, data)
+                upgrade.visible = True
+        elif current_page == "uniques":
+            for upgrade in reversed(upgrades):
+                upgrade.visible = False
