@@ -27,6 +27,9 @@ class UpgradeButton:
 
     def can_afford(self, data):
         return data["currency"] >= self.cost
+    
+    def owns_upgrade(self, data):
+        return data["purchases"].get(self.name, False)
 
     def clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -71,9 +74,7 @@ class UpgradeManager:
             y += self.padding
     
     def is_hovering(self, buttons, pos):
-        for button in buttons: 
-            if not button.visible: return
-        return any(button.rect.collidepoint(pos) for button in buttons)
+        return any(button.visible and button.rect.collidepoint(pos) for button in buttons)
     
     def update_cost(self, button, font, data):
         button.cost = int(button.base_cost * (1.15 ** data[button.amount]))
@@ -81,7 +82,7 @@ class UpgradeManager:
 
     def clicked(self, buttons, pos, data, scale, popups, font, PopupText):
         for button in buttons:
-            if not button.visible: return
+            if not button.visible: continue
             if button.clicked(pos):
                 if button.can_afford(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255)))
@@ -105,11 +106,16 @@ class UpgradeManager:
                 else:
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Can't Afford!", font("Regular", 30), (255, 0, 0)))
 
-    def draw(self, upgrades, screen, data, current_page):
-        if current_page == "upgrades":
-            for upgrade in reversed(upgrades):
-                upgrade.draw(screen, data)
-                upgrade.visible = True
-        elif current_page == "uniques":
-            for upgrade in reversed(upgrades):
-                upgrade.visible = False
+    def draw(self, buttons, screen, data, current_page):
+        y = self.start_y
+
+        for button in buttons:
+            is_unique = button.one_time
+            is_upgrade = not button.one_time
+
+            button.visible = ((is_unique and current_page == "uniques" and not button.owns_upgrade(data)) or (is_upgrade and current_page == "upgrades"))
+
+            if button.visible:
+                button.rect.center = (self.position_x, y)
+                button.draw(screen, data)
+                y += self.padding
