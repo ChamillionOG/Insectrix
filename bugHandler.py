@@ -138,11 +138,11 @@ class BugManager:
 
                     data["bugs"] += 1
 
-                    popups.append(PopupText(pos, f"+1 {bug.name}", font("Regular", 30), (255, 255, 255)))
+                    popups.append(PopupText(pos, f"+1 {bug.name}", font("Regular", 30), (255, 255, 255), 40))
 
                     return True
                 else:
-                    popups.append(PopupText(pos, "Full Container!", font("Regular", 30), (255, 0, 0)))
+                    popups.append(PopupText(pos, "Full Container!", font("Regular", 30), (255, 0, 0), 40))
 
         return False
 

@@ -92,7 +92,7 @@ class UpgradeManager:
             if not button.visible: continue
             if button.clicked(pos):
                 if button.can_afford(data):
-                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255)))
+                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255), 40))
                     data["currency"] -= button.cost
 
                     if button.one_time:
@@ -108,6 +108,8 @@ class UpgradeManager:
                             data["container"]["bugs"].clear()
                         elif button.name == "Basic Sell Plan":
                             data["sell_plan"] = "basic"
+                        elif button.name == "Auto Sell":
+                            data["owns_auto_sell"] = True
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)
@@ -121,7 +123,7 @@ class UpgradeManager:
 
                     self.organize_buttons(buttons)
                 else:
-                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Can't Afford!", font("Regular", 30), (255, 0, 0)))
+                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Can't Afford!", font("Regular", 30), (255, 0, 0), 40))
 
     def draw(self, buttons, screen, data, current_page):
         y = self.start_y

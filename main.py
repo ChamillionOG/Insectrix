@@ -29,6 +29,8 @@ default_data = {
     "sprays_bought": 0,
     "pollen_bought": 0,
     "sell_plan": "free",
+    "owns_auto_sell": False,
+    "auto_sell_interval": 15000,
     "container": {
         "type": "small_jar",
         "capacity": 10,
@@ -40,6 +42,7 @@ default_data = {
         "popups": True,
         "music": True,
         "fps": False,
+        "auto_sell": False,
     },
     "purchases": {}
 }
@@ -72,7 +75,10 @@ spawn_timer = 0
 base_spawn_delay = 1000
 
 autosave_timer = 0
-autosave_interval = 15000
+autosave_interval = 5000 # ms
+
+auto_sell_timer = 0
+auto_sell_interval = data["auto_sell_interval"]
 
 popups = []
 screen_bugs = []
@@ -160,6 +166,7 @@ def load_stats():
     title = font("ThinBold", 35).render("Stats", False, (255, 255, 255))
     max_bugs_text = font("Regular", 18).render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
     spawn_rate_text = font("Regular", 18).render(f"Spawn Rate: {data["spawn_rate"]} (s)", True, (255, 255, 255))
+    sell_interval_text = font("Regular", 18).render(f"Auto Sell Interval: {data["auto_sell_interval"] / 1000} (s)", True, (255, 255, 255))
     bugnet_text = font("Regular", 18).render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
     environment_text = font("Regular", 18).render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
     sell_plan_text = font("Regular", 18).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
@@ -169,14 +176,16 @@ def load_stats():
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
     screen.blit(spawn_rate_text, spawn_rate_text.get_rect(center=scale_position(257.5, 150)))
-    screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 180)))
-    screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 210)))
-    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 240)))
-    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 270)))
-    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 300)))
+    screen.blit(sell_interval_text, sell_interval_text.get_rect(center=scale_position(257.5, 180)))
+    screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 210)))
+    screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 240)))
+    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 270)))
+    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 300)))
+    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 330)))
 
 def load_settings():
     title = font("ThinBold", 35).render("Settings", False, (255, 255, 255))
+    owns_sell_plan = data["owns_auto_sell"]
 
     if data["settings"]["sound_effects"]:
         sound_effects_button = font("Regular", 18).render("Sound Effects: ENABLED", True, (0, 255, 0))
@@ -198,23 +207,33 @@ def load_settings():
     else:
         fps_button = font("Regular", 18).render("FPS: DISABLED", True, (255, 0, 0))
 
+    if not owns_sell_plan:
+        auto_sell_button = font("Regular", 18).render("Auto Sell: LOCKED", True, (175, 175, 175))
+    elif data["settings"]["auto_sell"] and owns_sell_plan:
+        auto_sell_button = font("Regular", 18).render("Auto Sell: ENABLED", True, (0, 255, 0))
+    elif not data["settings"]["auto_sell"] and owns_sell_plan:
+        auto_sell_button = font("Regular", 18).render("Auto Sell: DISABLED", True, (255, 0, 0))
+
     title_rect = title.get_rect(center=scale_position(257.5, 80))
     sound_effects_rect = sound_effects_button.get_rect(center=scale_position(257.5, 130))
     popups_rect = popups_button.get_rect(center=scale_position(257.5, 170))
     music_rect = music_button.get_rect(center=scale_position(257.5, 210))
     fps_rect = fps_button.get_rect(center=scale_position(257.5, 250))
+    auto_sell_rect = auto_sell_button.get_rect(center=scale_position(257.5, 290))
 
     screen.blit(title, title_rect)
     screen.blit(sound_effects_button, sound_effects_rect)
     screen.blit(popups_button, popups_rect)
     screen.blit(music_button, music_rect)
     screen.blit(fps_button, fps_rect)
+    screen.blit(auto_sell_button, auto_sell_rect)
 
     return {
         "sound_effects": sound_effects_rect,
         "popups": popups_rect,
         "music": music_rect,
-        "fps": fps_rect
+        "fps": fps_rect,
+        "auto_sell": auto_sell_rect
     }
 
 settings_rects = load_settings()
@@ -299,7 +318,9 @@ while running:
             elif settings_rects["music"].collidepoint(mouse_pos):
                 data["settings"]["music"] = not data["settings"]["music"]
             elif settings_rects["fps"].collidepoint(mouse_pos):
-                data["settings"]["fps"] = not data ["settings"]["fps"]
+                data["settings"]["fps"] = not data["settings"]["fps"]
+            elif settings_rects["auto_sell"].collidepoint(mouse_pos) and data["owns_auto_sell"]:
+                data["settings"]["auto_sell"] = not data["settings"]["auto_sell"]
             elif quit_rect.collidepoint(mouse_pos):
                 save_game(data)
                 running = False
@@ -312,7 +333,7 @@ while running:
             if event.key == pygame.K_BACKSLASH:
                 data = default_data.copy()
                 save_game(data)
-                popups.append(PopupText((screen_width / 2, screen_height /2), "DATA WIPED", font("Regular", 50), (255, 0, 0)))
+                popups.append(PopupText((screen_width / 2, screen_height /2), "DATA WIPED", font("Regular", 50), (255, 0, 0), 40))
 
                 container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
                 bugnet_manager.load_bugnet(load_scaled)
@@ -332,6 +353,23 @@ while running:
     if autosave_timer >= autosave_interval:
         save_game(data)
         autosave_timer = 0
+
+    if data["settings"]["auto_sell"] and data["owns_auto_sell"]:
+        auto_sell_timer += dt * 1000
+
+        if auto_sell_timer >= auto_sell_interval:
+            total = sum(data["container"]["bugs"].values())
+
+            if total > 0:
+                data["currency"] += total
+                data["container"]["bugs"] = {}
+                data["bugs"] = 0
+
+                container_manager.load_bugs(container_bugs, load_scaled, bugs_list, scale, Bug, data)
+
+                popups.append(PopupText((screen_width / 2, sy(200)), f"+{total} Insectra Auto-Sold", font("Regular", 40), (0, 255, 0), 180))
+
+            auto_sell_timer = 0
 
     for popup in popups[:]:
         popup.update(scale)

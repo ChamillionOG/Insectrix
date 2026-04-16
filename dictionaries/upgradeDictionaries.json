@@ -43,6 +43,15 @@
             "data": "sell_plan",
             "amount": null,
             "one_time": true
+        },
+
+        {
+            "name": "Auto Sell",
+            "icon": "assets/images/upgradeIcons/auto_sell_icon.png",
+            "cost": 300,
+            "data": "owns_auto_sell",
+            "amount": null,
+            "one_time": true
         }
     ]
 }
