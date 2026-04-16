@@ -19,6 +19,15 @@
         },
 
         {
+            "name": "Clockwork",
+            "icon": "assets/images/upgradeIcons/sell_timer_icon.png",
+            "cost": 100,
+            "data": "auto_sell_interval",
+            "amount": "clocks_bought",
+            "one_time": false
+        },
+
+        {
             "name": "Sturdy Bugnet",
             "icon": "assets/images/upgradeIcons/sturdy_bugnet_icon.png",
             "cost": 30,

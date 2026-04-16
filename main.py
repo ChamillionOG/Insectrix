@@ -28,6 +28,7 @@ default_data = {
     "environment": "forest",
     "sprays_bought": 0,
     "pollen_bought": 0,
+    "clocks_bought": 0,
     "sell_plan": "free",
     "owns_auto_sell": False,
     "auto_sell_interval": 15000,
@@ -78,7 +79,6 @@ autosave_timer = 0
 autosave_interval = 5000 # ms
 
 auto_sell_timer = 0
-auto_sell_interval = data["auto_sell_interval"]
 
 popups = []
 screen_bugs = []
@@ -357,8 +357,18 @@ while running:
     if data["settings"]["auto_sell"] and data["owns_auto_sell"]:
         auto_sell_timer += dt * 1000
 
-        if auto_sell_timer >= auto_sell_interval:
-            total = sum(data["container"]["bugs"].values())
+        auto_sell_interval = data["auto_sell_interval"]
+
+        plan_type = data["sell_plan"]
+        sell_cooldown = sellplans_list[plan_type]["cooldown"] * 1000
+        total_delay = auto_sell_interval + sell_cooldown
+
+        if auto_sell_timer >= total_delay:
+            total = 0
+
+            for bug_name, amount in data["container"]["bugs"].items():
+                bug_value = bugs_list[bug_name]["value"]
+                total += bug_value * amount
 
             if total > 0:
                 data["currency"] += total

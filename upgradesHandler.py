@@ -120,6 +120,8 @@ class UpgradeManager:
                                 data[button.data] = round(data[button.data], 2)
                         elif button.name == "Florescent Spray":
                             data[button.data] += 1
+                        elif button.name == "Clockwork":
+                            data[button.data] -= 100
 
                     self.organize_buttons(buttons)
                 else:

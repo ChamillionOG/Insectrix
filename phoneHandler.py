@@ -91,7 +91,12 @@ class PhoneManager:
                 self.image = self.sell_frame_one if self.sell_frame == 0 else self.sell_frame_two
             
             if self.sell_duration <= 0:
-                total = sum(data["container"]["bugs"].values())
+                total = 0
+
+                for bug_name, amount in data["container"]["bugs"].items():
+                    bug_value = bugs_list[bug_name]["value"]
+                    total += bug_value * amount
+                    
                 data["currency"] += total
                 data["container"]["bugs"] = {}
                 data["bugs"] = 0

@@ -1,4 +1,3 @@
-import pygame
 import random
 import math
 
@@ -7,18 +6,27 @@ class Bug:
         self.x, self.y = position
         self.bug_data = bug_data
 
+        self.pos_x = float(self.x)
+        self.pos_y = float(self.y)
+
         self.key = self.bug_data["key"]
         self.name = self.bug_data["name"]
         self.image = load_scaled(self.bug_data["image"], 128, 128)
-        self.amplitude = self.bug_data["amplitude"] # Higher = More Motion
-        self.frequency = self.bug_data["frequency"] # Smaller = Closer Waves
+        self.movement = self.bug_data["movement"]
+
+        self.amplitude = self.bug_data["amplitude"]
+        self.frequency = self.bug_data["frequency"]
         self.speed = self.bug_data["speed"]
         self.weight = self.bug_data["weight"]
+        self.value = self.bug_data["value"]
 
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.direction = random.choice([-1, 1])
         self.base_y = self.y
         self.var = 0
+
+        self.wander_angle = random.uniform(0, math.pi * 2)
+        self.wander_strength = 2.5
 
         self.in_container = False
         self.targetY = None
@@ -27,18 +35,44 @@ class Bug:
 
     def draw(self, scale, screen, screen_width, sx, container_rect=None):
         if not self.in_container:
-            # Regular Side to Side Movement
-            self.rect.x += self.direction * (self.speed * scale)
+            if self.movement == "soft":
+                self.pos_x += self.direction * (self.speed * scale)
 
-            if self.rect.left <= sx(5) or self.rect.right >= screen_width - sx(5):
-                self.direction *= -1
+                self.var += 1
+                self.pos_y = self.base_y + (self.amplitude * math.sin(self.frequency * self.var)) * scale
+            elif self.movement == "jittery":
+                self.pos_x += self.direction * (self.speed * scale)
 
-            self.var += 1
-            self.rect.y = self.base_y + (int(self.amplitude * math.sin(self.frequency * self.var)) * scale)
+                self.wander_angle += random.uniform(-0.2, 0.2)
 
-            screen.blit(self.image, self.rect)
+                wander_x = math.cos(self.wander_angle) * self.wander_strength
+                wander_y = math.sin(self.wander_angle) * self.wander_strength
+
+                self.pos_x += wander_x * scale
+                self.pos_y += wander_y * scale
+
+                if random.random() < 0.01:
+                    self.direction *= -1
+
+                self.var += 1
+                drift = math.sin(self.frequency * self.var) * self.amplitude
+                target_y = self.base_y + drift
+                self.pos_y += (target_y - self.pos_y) * 0.05
+
+            self.rect.x = int(self.pos_x)
+            self.rect.y = int(self.pos_y)
+
+            if self.rect.left <= sx(5):
+                self.rect.left = sx(5)
+                self.pos_x = self.rect.x
+                self.direction = 1
+
+            if self.rect.right >= screen_width - sx(5):
+                self.rect.right = screen_width - sx(5)
+                self.pos_x = self.rect.x
+                self.direction = -1
+
         else:
-            # Container Physics
             gravity = 0.4 * scale
             air_resistance = 0.999
             bounce_damping = 0.4
@@ -73,7 +107,7 @@ class Bug:
                     self.velX = 0
 
         screen.blit(self.image, self.rect)
-    
+
 class BugManager:
     def __init__(self, current_environment, container_bugs, popup_manager, bugs_list, enviroments_list):
         self.current_environment = current_environment

@@ -3,19 +3,23 @@
         "key": "monarch_butterfly",
         "name": "Monarch Butterfly",
         "image": "assets/images/bugs/monarchButterfly.png",
+        "movement": "soft",
         "amplitude": 50,
         "frequency": 0.05,
         "speed": 4,
-        "weight": 70
+        "weight": 90,
+        "value": 1
     },
 
     "bee": {
         "key": "bee",
         "name": "Bee",
         "image": "assets/images/bugs/bee.png",
+        "movement": "jittery",
         "amplitude": 25,
         "frequency": 0.025,
         "speed": 2.5,
-        "weight": 30
+        "weight": 10,
+        "value": 2
     }
 }
