@@ -13,7 +13,12 @@ class UpgradeButton:
         self.amount = self.config["amount"]
         self.one_time = self.config["one_time"]
 
-        self.cost = int(self.base_cost * (1.15 ** data[self.amount]))
+        if self.one_time:
+            self.cost = self.base_cost
+        elif self.data is not None and self.amount is not None:
+            self.cost = int(self.base_cost * (1.15 ** data[self.amount]))
+        else:
+            self.cost = self.base_cost
         
         self.frame = load_scaled("assets/ui/upgrade_button_frame.png", 410.4, 125.6)
         self.cover = load_scaled("assets/ui/upgrade_cover_frame.png", 410.4, 125.6)
@@ -77,6 +82,8 @@ class UpgradeManager:
         return any(button.visible and button.rect.collidepoint(pos) for button in buttons)
     
     def update_cost(self, button, font, data):
+        if button.one_time: return
+
         button.cost = int(button.base_cost * (1.15 ** data[button.amount]))
         button.cost_text = font("Thin", 20).render(f"{button.cost:,} Insectra", False, (255, 255, 255))
 
@@ -91,6 +98,16 @@ class UpgradeManager:
                     if button.one_time:
                         data["purchases"][button.name] = True
                         buttons.remove(button)
+
+                        if button.name == "Sturdy Bugnet":
+                            data["bugnet"] = "sturdy"
+                        elif button.name == "Medium Jar":
+                            data["container"]["type"] = "medium_jar"
+                            data["container"]["capacity"] = 15
+                            data["container"]["offset"] = 15
+                            data["container"]["bugs"].clear()
+                        elif button.name == "Basic Sell Plan":
+                            data["sell_plan"] = "basic"
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)

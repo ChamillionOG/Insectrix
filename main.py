@@ -342,12 +342,20 @@ while running:
     new_bugnet = data["bugnet"]
 
     if current_container != new_container:
+        container_manager.container_name = new_container
         container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
+        current_container = new_container
     elif current_bugnet != new_bugnet:
+        bugnet_manager.current_bugnet = new_bugnet
+        bugnet_manager.bugnet_name = new_bugnet
+        bugnet_manager.bugnet_data = bugnets_list[new_bugnet]
         bugnet_manager.load_bugnet(load_scaled)
-
+        current_bugnet = new_bugnet
+    
     screen.blit(static_surface, (0, 0))
     screen.blit(container_manager.image, container_manager.rect)
+
+    bug_manager.draw(screen_width, screen_bugs, screen, scale, sx)
     
     screen.blit(options_button, options_button_rect)
 
@@ -395,8 +403,7 @@ while running:
 
     upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
     phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
-    bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale)
-    bug_manager.draw(screen_width, screen_bugs, screen, scale, sx)
+    bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled)
     container_manager.draw(container_bugs, screen, scale, screen_width, sx)
 
     for popup in popups:

@@ -16,6 +16,33 @@
             "data": "max_bugs",
             "amount": "sprays_bought",
             "one_time": false
+        },
+
+        {
+            "name": "Sturdy Bugnet",
+            "icon": "assets/images/upgradeIcons/sturdy_bugnet_icon.png",
+            "cost": 30,
+            "data": "bugnet",
+            "amount": null,
+            "one_time": true
+        },
+
+        {
+            "name": "Medium Jar",
+            "icon": "assets/images/upgradeIcons/medium_jar_icon.png",
+            "cost": 50,
+            "data": "container",
+            "amount": null,
+            "one_time": true
+        },
+
+        {
+            "name": "Basic Sell Plan",
+            "icon": "assets/images/upgradeIcons/truck_icon.png",
+            "cost": 75,
+            "data": "sell_plan",
+            "amount": null,
+            "one_time": true
         }
     ]
 }

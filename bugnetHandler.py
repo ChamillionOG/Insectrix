@@ -81,11 +81,12 @@ class BugnetManager:
         if abs(dx) < 0.5:
             self.angle *= (1 - self.return_speed)
 
-    def draw(self, screen, data, cursor_icon, cursor_icon_rect, scale):
+    def draw(self, screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled):
         if data["bugnet"] != self.current_bugnet:
             self.current_bugnet = data["bugnet"]
             self.bugnet_name = self.current_bugnet
             self.bugnet_data = self.bugnets_list[self.current_bugnet]
+            self.load_bugnet(load_scaled)
 
         current_time = pygame.time.get_ticks()
 
