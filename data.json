@@ -1,12 +1,12 @@
 {
-    "bugs": 1,
-    "max_bugs": 4,
-    "spawn_rate": 4.75,
-    "currency": 9,
+    "bugs": 0,
+    "max_bugs": 1,
+    "spawn_rate": 5,
+    "currency": 8,
     "bugnet": "wooden",
     "environment": "forest",
-    "sprays_bought": 3,
-    "pollen_bought": 5,
+    "sprays_bought": 0,
+    "pollen_bought": 0,
     "clocks_bought": 0,
     "sell_plan": "free",
     "owns_auto_sell": false,
@@ -15,9 +15,7 @@
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {
-            "monarch_butterfly": 1
-        }
+        "bugs": {}
     },
     "settings": {
         "sound_effects": true,

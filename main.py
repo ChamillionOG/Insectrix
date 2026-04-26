@@ -53,23 +53,16 @@ default_data = {
 
 data = load_game(default_data)
 
-with open("dictionaries/bugDictionaries.json", "r") as f:
-    bugs_list = json.load(f)
-
-with open("dictionaries/bugnetDictionaries.json", "r") as f:
-    bugnets_list = json.load(f)
-
-with open("dictionaries/environmentDictionaries.json", "r") as f:
-    environments_list = json.load(f)
-
-with open("dictionaries/containerDictionaries.json", "r") as f:
-    containers_list = json.load(f)
-
-with open("dictionaries/upgradeDictionaries.json", "r") as f:
-    upgrades_list = json.load(f)
-
-with open("dictionaries/sellDictionaries.json", "r") as f:
-    sellplans_list = json.load(f)
+def load_json(path):
+    with open (path, "r") as file:
+        return json.load(file)
+    
+bugs_list = load_json("dictionaries/bugDictionaries.json")
+bugnets_list = load_json("dictionaries/bugnetDictionaries.json")
+environments_list = load_json("dictionaries/environmentDictionaries.json")
+containers_list = load_json("dictionaries/containerDictionaries.json")
+upgrades_list = load_json("dictionaries/upgradeDictionaries.json")
+sellplans_list = load_json("dictionaries/sellDictionaries.json")
 
 #[-----------------]#
 #[----VARIABLES----]#
@@ -79,7 +72,7 @@ spawn_timer = 0
 base_spawn_delay = 1000
 
 autosave_timer = 0
-autosave_interval = 5000 # ms
+autosave_interval = 5000
 
 auto_sell_timer = 0
 
@@ -162,6 +155,10 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
     venmo_button_rect = venmo_button.get_rect(center=(credits_frame_x + sx(160), social_button_y))
     venmo_scale = 1
 
+    black_screen_rect = pygame.Rect(0, -screen_height, screen_width, screen_height + sy(25))
+
+    transition = False
+
     running = True
     while running:
         current_time = pygame.time.get_ticks()
@@ -220,10 +217,10 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
         mouse_pos = pygame.mouse.get_pos()
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        x_center = (credits_frame_x - sx(160) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
-        discord_center = (credits_frame_x - sx(50) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
+        x_center = (credits_frame_x - sx(180) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
+        discord_center = (credits_frame_x - sx(60) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
         cashapp_center = (credits_frame_x + sx(60) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
-        venmo_center = (credits_frame_x + sx(160) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
+        venmo_center = (credits_frame_x + sx(170) * credits_content_scale, frame_center_y + sy(405) * credits_content_scale)
 
         scaled_x_button, x_button_rect, x_scale = update_button(x_button, x_scale, x_button_rect.collidepoint(mouse_pos), x_center, base_scale=credits_content_scale)
         scaled_discord_button, discord_button_rect, discord_scale = update_button(discord_button, discord_scale, discord_button_rect.collidepoint(mouse_pos), discord_center, base_scale=credits_content_scale)
@@ -247,6 +244,13 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
         cursor_icon_rect.center = (mouse_x + sx(10), mouse_y + sy(10))
         screen.blit(cursor_icon, cursor_icon_rect)
 
+        if transition:
+            black_screen_rect.y += (0 - black_screen_rect.y) * 0.04
+            pygame.draw.rect(screen, (0, 0, 0), black_screen_rect)
+
+            if black_screen_rect.y > -13:
+                return
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -254,7 +258,7 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if play_button_rect.collidepoint(event.pos):
-                    return
+                    transition = True
                 if credits_button_rect.collidepoint(event.pos):
                     credits_open = not credits_open
                 if quit_button_rect.collidepoint(event.pos):
@@ -306,6 +310,8 @@ main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect, sx
 
 last_currency = None
 currency_text_scale = 1.0
+
+black_screen_rect = pygame.Rect(0, 0, screen_width, screen_height)
 
 #[----------------]#
 #[----MANAGERS----]#
@@ -416,6 +422,13 @@ def load_settings():
 
 settings_rects = load_settings()
 
+quit_frame = load_scaled("assets/ui/confirmation_frame.png", 425, 297.5)
+quit_frame_rect = quit_frame.get_rect(center=(screen_width // 2, screen_height // 2))
+quit_open = False
+
+confirm_rect = pygame.Rect(0, 0, 0, 0)
+cancel_rect = pygame.Rect(0, 0, 0, 0)
+
 #[----------------]#
 #[----UPGRADES----]#
 #[----------------]#
@@ -497,12 +510,17 @@ while running:
             elif settings_rects["auto_sell"].collidepoint(mouse_pos) and data["owns_auto_sell"]:
                 data["settings"]["auto_sell"] = not data["settings"]["auto_sell"]
             elif quit_rect.collidepoint(mouse_pos):
-                save_game(data)
-                running = False
+                quit_open = True
             elif uniques_button_rect.collidepoint(mouse_pos) and current_store == "upgrades":
                 current_store = "uniques"
             elif upgrades_button_rect.collidepoint(mouse_pos) and current_store == "uniques":
                 current_store = "upgrades"
+
+            if confirm_rect.collidepoint(mouse_pos):
+                save_game(data)
+                running = False
+            elif cancel_rect.collidepoint(mouse_pos):
+                quit_open = False
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_BACKSLASH:
@@ -624,6 +642,36 @@ while running:
     screen.blit(uniques_button, uniques_button_rect)
     screen.blit(uniques_label, uniques_label_rect)
 
+    if quit_open:
+        title = font("Regular", 28).render("Would you like to quit?", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(screen_width // 2, (screen_height // 2) - sy(40)))
+
+        confirm_rect = pygame.Rect(0, 0, sx(120), sy(40))
+        confirm_rect.center = ((screen_width // 2) - sx(80), (screen_height // 2) + sy(50))
+
+        cancel_rect = pygame.Rect(0, 0, sx(120), sy(40))
+        cancel_rect.center = ((screen_width // 2) + sx(80), (screen_height // 2) + sy(50))
+
+        confirm_color = (255, 255, 255)
+        cancel_color = (255, 255, 255)
+
+        if confirm_rect.collidepoint(mouse_pos):
+            confirm_color = (0, 255, 0)
+
+        if cancel_rect.collidepoint(mouse_pos):
+            cancel_color = (255, 0, 0)
+
+        confirm_button = font("Regular", 25).render("Confirm", True, confirm_color)
+        cancel_button = font("Regular", 25).render("Cancel", True, cancel_color)
+
+        confirm_rect = confirm_button.get_rect(center=confirm_rect.center)
+        cancel_rect = cancel_button.get_rect(center=cancel_rect.center)
+
+        screen.blit(quit_frame, quit_frame_rect)
+        screen.blit(title, title_rect)
+        screen.blit(confirm_button, confirm_rect)
+        screen.blit(cancel_button, cancel_rect)
+
     upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
     phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled)
@@ -642,7 +690,7 @@ while running:
     hovering_ui = any(rect.collidepoint(mouse_pos) for _, rect in clickable_rects)
     bugnet_manager.visible = not hovering_ui
 
-    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos):
+    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos) or (quit_frame_rect.collidepoint(mouse_pos) and quit_open):
         bugnet_manager.visible = False
 
     currency_difference = data["currency"] - display_currency
@@ -665,5 +713,8 @@ while running:
     currency_rect = currency_text.get_rect(midtop=(screen_width // 2, sy(40)))
     screen.blit(shadow_text, (currency_rect.x + sx(3), currency_rect.y + sy(3)))
     screen.blit(currency_text, currency_rect)
+
+    black_screen_rect.y += ((screen_height + sy(50)) - black_screen_rect.y) * 0.04
+    pygame.draw.rect(screen, (0, 0, 0), black_screen_rect)
 
     pygame.display.flip()
