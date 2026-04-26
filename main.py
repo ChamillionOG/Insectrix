@@ -405,11 +405,27 @@ def load_settings():
     fps_rect = fps_button.get_rect(center=scale_position(257.5, 250))
     auto_sell_rect = auto_sell_button.get_rect(center=scale_position(257.5, 290))
 
+    mouse_pos = pygame.mouse.get_pos()
+
     screen.blit(title, title_rect)
+    if sound_effects_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), sound_effects_rect.inflate(sx(30), sy(20)))
     screen.blit(sound_effects_button, sound_effects_rect)
+
+    if popups_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), popups_rect.inflate(sx(30), sy(20)))
     screen.blit(popups_button, popups_rect)
+
+    if music_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), music_rect.inflate(sx(30), sy(20)))
     screen.blit(music_button, music_rect)
+
+    if fps_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), fps_rect.inflate(sx(30), sy(20)))
     screen.blit(fps_button, fps_rect)
+
+    if auto_sell_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), auto_sell_rect.inflate(sx(30), sy(20)))
     screen.blit(auto_sell_button, auto_sell_rect)
 
     return {
@@ -642,36 +658,6 @@ while running:
     screen.blit(uniques_button, uniques_button_rect)
     screen.blit(uniques_label, uniques_label_rect)
 
-    if quit_open:
-        title = font("Regular", 28).render("Would you like to quit?", True, (255, 255, 255))
-        title_rect = title.get_rect(center=(screen_width // 2, (screen_height // 2) - sy(40)))
-
-        confirm_rect = pygame.Rect(0, 0, sx(120), sy(40))
-        confirm_rect.center = ((screen_width // 2) - sx(80), (screen_height // 2) + sy(50))
-
-        cancel_rect = pygame.Rect(0, 0, sx(120), sy(40))
-        cancel_rect.center = ((screen_width // 2) + sx(80), (screen_height // 2) + sy(50))
-
-        confirm_color = (255, 255, 255)
-        cancel_color = (255, 255, 255)
-
-        if confirm_rect.collidepoint(mouse_pos):
-            confirm_color = (0, 255, 0)
-
-        if cancel_rect.collidepoint(mouse_pos):
-            cancel_color = (255, 0, 0)
-
-        confirm_button = font("Regular", 25).render("Confirm", True, confirm_color)
-        cancel_button = font("Regular", 25).render("Cancel", True, cancel_color)
-
-        confirm_rect = confirm_button.get_rect(center=confirm_rect.center)
-        cancel_rect = cancel_button.get_rect(center=cancel_rect.center)
-
-        screen.blit(quit_frame, quit_frame_rect)
-        screen.blit(title, title_rect)
-        screen.blit(confirm_button, confirm_rect)
-        screen.blit(cancel_button, cancel_rect)
-
     upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
     phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled)
@@ -716,5 +702,42 @@ while running:
 
     black_screen_rect.y += ((screen_height + sy(50)) - black_screen_rect.y) * 0.04
     pygame.draw.rect(screen, (0, 0, 0), black_screen_rect)
+
+    if quit_open:
+        title = font("Regular", 28).render("Would you like to quit?", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(screen_width // 2, (screen_height // 2) - sy(40)))
+
+        confirm_rect = pygame.Rect(0, 0, sx(120), sy(40))
+        confirm_rect.center = ((screen_width // 2) - sx(80), (screen_height // 2) + sy(50))
+
+        cancel_rect = pygame.Rect(0, 0, sx(120), sy(40))
+        cancel_rect.center = ((screen_width // 2) + sx(80), (screen_height // 2) + sy(50))
+
+        confirm_color = (255, 255, 255)
+        cancel_color = (255, 255, 255)
+
+        if confirm_rect.collidepoint(mouse_pos):
+            confirm_color = (0, 255, 0)
+
+        if cancel_rect.collidepoint(mouse_pos):
+            cancel_color = (255, 0, 0)
+
+        confirm_button = font("Regular", 25).render("Confirm", True, confirm_color)
+        cancel_button = font("Regular", 25).render("Cancel", True, cancel_color)
+
+        confirm_rect = confirm_button.get_rect(center=confirm_rect.center)
+        cancel_rect = cancel_button.get_rect(center=cancel_rect.center)
+
+        overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 150))
+        screen.blit(overlay, (0, 0))
+
+        screen.blit(quit_frame, quit_frame_rect)
+        screen.blit(title, title_rect)
+        screen.blit(confirm_button, confirm_rect)
+        screen.blit(cancel_button, cancel_rect)
+
+        if quit_frame_rect.collidepoint(mouse_pos):
+            screen.blit(cursor_icon, cursor_icon_rect)
 
     pygame.display.flip()
