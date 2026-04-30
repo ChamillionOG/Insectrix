@@ -51,6 +51,7 @@ default_data = {
         "music": True,
         "fps": False,
         "auto_sell": False,
+        "bug_catchers": False,
     },
     "purchases": {}
 }
@@ -361,6 +362,8 @@ def load_stats():
     sell_plan_text = font("Regular", 18).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
     container_text = font("Regular", 18).render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
     capacity_text = font("Regular", 18).render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
+    bug_catchers_text = font("Regular", 18).render(f"Auto Bug Catchers: {data["auto_bug_catchers"]}", True, (255, 255, 255))
+    catcher_speed_text = font("Regular", 18).render(f"Auto Bug Catcher Speed: {data["catcher_speed"]}", True, (255, 255, 255))
 
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
@@ -371,6 +374,8 @@ def load_stats():
     screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 270)))
     screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 300)))
     screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 330)))
+    screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 360)))
+    screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 390)))
 
 def load_settings():
     title = font("ThinBold", 35).render("Settings", False, (255, 255, 255))
@@ -403,12 +408,20 @@ def load_settings():
     elif not data["settings"]["auto_sell"] and owns_sell_plan:
         auto_sell_button = font("Regular", 18).render("Auto Sell: DISABLED", True, (255, 0, 0))
 
+    if data["auto_bug_catchers"] == 0:
+        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: LOCKED", True, (175, 175, 175))
+    elif data["settings"]["bug_catchers"] and data["auto_bug_catchers"] > 0:
+        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: ENABLED", True, (0, 255, 0))
+    elif not data["settings"]["bug_catchers"] and data["auto_bug_catchers"] > 0:
+        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: DISABLED", True, (255, 0, 0))
+
     title_rect = title.get_rect(center=scale_position(257.5, 80))
     sound_effects_rect = sound_effects_button.get_rect(center=scale_position(257.5, 130))
     popups_rect = popups_button.get_rect(center=scale_position(257.5, 170))
     music_rect = music_button.get_rect(center=scale_position(257.5, 210))
     fps_rect = fps_button.get_rect(center=scale_position(257.5, 250))
     auto_sell_rect = auto_sell_button.get_rect(center=scale_position(257.5, 290))
+    bug_catcher_rect = bug_catcher_button.get_rect(center=scale_position(257.5, 330))
 
     mouse_pos = pygame.mouse.get_pos()
 
@@ -433,12 +446,17 @@ def load_settings():
         pygame.draw.rect(screen, (98, 56, 42), auto_sell_rect.inflate(sx(30), sy(20)))
     screen.blit(auto_sell_button, auto_sell_rect)
 
+    if bug_catcher_rect.collidepoint(mouse_pos):
+        pygame.draw.rect(screen, (98, 56, 42), bug_catcher_rect.inflate(sx(30), sy(20)))
+    screen.blit(bug_catcher_button, bug_catcher_rect)
+
     return {
         "sound_effects": sound_effects_rect,
         "popups": popups_rect,
         "music": music_rect,
         "fps": fps_rect,
-        "auto_sell": auto_sell_rect
+        "auto_sell": auto_sell_rect,
+        "bug_catchers": bug_catcher_rect
     }
 
 settings_rects = load_settings()
@@ -541,6 +559,8 @@ while running:
                 data["settings"]["fps"] = not data["settings"]["fps"]
             elif settings_rects["auto_sell"].collidepoint(mouse_pos) and data["owns_auto_sell"]:
                 data["settings"]["auto_sell"] = not data["settings"]["auto_sell"]
+            elif settings_rects["bug_catchers"].collidepoint(mouse_pos) and (data["auto_bug_catchers"] > 0):
+                data["settings"]["bug_catchers"] = not data["settings"]["bug_catchers"]
             elif quit_rect.collidepoint(mouse_pos):
                 quit_open = True
             elif uniques_button_rect.collidepoint(mouse_pos) and current_store == "upgrades":

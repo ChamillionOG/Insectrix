@@ -1,8 +1,8 @@
 {
-    "bugs": 0,
+    "bugs": 9,
     "max_bugs": 1,
     "spawn_rate": 5,
-    "currency": 2,
+    "currency": 12,
     "bugnet": "worn",
     "environment": "forest",
     "sprays_bought": 0,
@@ -11,21 +11,24 @@
     "sell_plan": "free",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
-    "owns_auto_bug_catcher": false,
-    "auto_bug_catchers": 0,
+    "auto_bug_catchers": 1,
     "catcher_speed": 2,
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "monarch_butterfly": 8,
+            "bee": 1
+        }
     },
     "settings": {
         "sound_effects": true,
         "popups": true,
         "music": true,
-        "fps": false,
-        "auto_sell": false
+        "fps": true,
+        "auto_sell": false,
+        "bug_catchers": false
     },
     "purchases": {}
 }
