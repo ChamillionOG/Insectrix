@@ -70,6 +70,15 @@
             "data": "owns_auto_sell",
             "amount": null,
             "one_time": true
+        },
+
+        {
+            "name": "Bionic Bugnet",
+            "icon": "assets/images/upgradeIcons/bionic_bugnet_icon.png",
+            "cost": 500,
+            "data": "auto_bug_catchers",
+            "amount": null,
+            "one_time": true
         }
     ]
 }

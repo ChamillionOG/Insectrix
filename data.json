@@ -1,8 +1,8 @@
 {
-    "bugs": 9,
+    "bugs": 2,
     "max_bugs": 1,
     "spawn_rate": 5,
-    "currency": 12,
+    "currency": 0,
     "bugnet": "worn",
     "environment": "forest",
     "sprays_bought": 0,
@@ -11,15 +11,14 @@
     "sell_plan": "free",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
-    "auto_bug_catchers": 1,
+    "auto_bug_catchers": 0,
     "catcher_speed": 2,
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
         "bugs": {
-            "monarch_butterfly": 8,
-            "bee": 1
+            "monarch_butterfly": 2
         }
     },
     "settings": {

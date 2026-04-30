@@ -41,7 +41,7 @@ class BugCollector:
 
             if distance > 1:
                 direction = direction.normalize()
-                self.pos += direction * speed
+                self.pos += direction * 5
             else:
                 self.pos = self.start_pos.copy()
                 

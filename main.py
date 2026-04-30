@@ -36,7 +36,6 @@ default_data = {
     "sell_plan": "free",
     "owns_auto_sell": False,
     "auto_sell_interval": 15000,
-    "owns_auto_bug_catcher": False,
     "auto_bug_catchers": 0,
     "catcher_speed": 2,
     "container": {
@@ -352,18 +351,21 @@ quit_rect = quit_button.get_rect(topleft=scale_position(15, 270))
 options_frame = load_scaled("assets/ui/options_frame.png", 325, 475)
 options_frame_rect = options_frame.get_rect(topleft=scale_position(95, 15))
 
+options_button_font = font("Regular", 18)
+options_title_font = font("ThinBold", 35)
+
 def load_stats():
-    title = font("ThinBold", 35).render("Stats", False, (255, 255, 255))
-    max_bugs_text = font("Regular", 18).render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
-    spawn_rate_text = font("Regular", 18).render(f"Spawn Rate: {data["spawn_rate"]} (s)", True, (255, 255, 255))
-    sell_interval_text = font("Regular", 18).render(f"Auto Sell Interval: {data["auto_sell_interval"] / 1000} (s)", True, (255, 255, 255))
-    bugnet_text = font("Regular", 18).render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
-    environment_text = font("Regular", 18).render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
-    sell_plan_text = font("Regular", 18).render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
-    container_text = font("Regular", 18).render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
-    capacity_text = font("Regular", 18).render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
-    bug_catchers_text = font("Regular", 18).render(f"Auto Bug Catchers: {data["auto_bug_catchers"]}", True, (255, 255, 255))
-    catcher_speed_text = font("Regular", 18).render(f"Auto Bug Catcher Speed: {data["catcher_speed"]}", True, (255, 255, 255))
+    title = options_title_font.render("Stats", False, (255, 255, 255))
+    max_bugs_text = options_button_font.render(f"Max Bugs: {data["max_bugs"]}", True, (255, 255, 255))
+    spawn_rate_text = options_button_font.render(f"Spawn Rate: {data["spawn_rate"]} (s)", True, (255, 255, 255))
+    sell_interval_text = options_button_font.render(f"Auto Sell Interval: {data["auto_sell_interval"] / 1000} (s)", True, (255, 255, 255))
+    bugnet_text = options_button_font.render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
+    environment_text = options_button_font.render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
+    sell_plan_text = options_button_font.render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
+    container_text = options_button_font.render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
+    capacity_text = options_button_font.render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
+    bug_catchers_text = options_button_font.render(f"Auto Bug Catchers: {data["auto_bug_catchers"]}", True, (255, 255, 255))
+    catcher_speed_text = options_button_font.render(f"Auto Bug Catcher Speed: {data["catcher_speed"]}", True, (255, 255, 255))
 
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
@@ -378,42 +380,42 @@ def load_stats():
     screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 390)))
 
 def load_settings():
-    title = font("ThinBold", 35).render("Settings", False, (255, 255, 255))
+    title = options_title_font.render("Settings", False, (255, 255, 255))
     owns_sell_plan = data["owns_auto_sell"]
 
     if data["settings"]["sound_effects"]:
-        sound_effects_button = font("Regular", 18).render("Sound Effects: ENABLED", True, (0, 255, 0))
+        sound_effects_button = options_button_font.render("Sound Effects: ENABLED", True, (0, 255, 0))
     else:
-        sound_effects_button = font("Regular", 18).render("Sound Effects: DISABLED", True, (255, 0, 0))
+        sound_effects_button = options_button_font.render("Sound Effects: DISABLED", True, (255, 0, 0))
 
     if data["settings"]["popups"]:
-        popups_button = font("Regular", 18).render("PopUps: ENABLED", True, (0, 255, 0))
+        popups_button = options_button_font.render("PopUps: ENABLED", True, (0, 255, 0))
     else:
-        popups_button = font("Regular", 18).render("PopUps: DISABLED", True, (255, 0, 0))
+        popups_button = options_button_font.render("PopUps: DISABLED", True, (255, 0, 0))
 
     if data["settings"]["music"]:
-        music_button = font("Regular", 18).render("Music: ENABLED", True, (0, 255, 0))
+        music_button = options_button_font.render("Music: ENABLED", True, (0, 255, 0))
     else:
-        music_button = font("Regular", 18).render("Music: DISABLED", True, (255, 0, 0))
+        music_button = options_button_font.render("Music: DISABLED", True, (255, 0, 0))
 
     if data["settings"]["fps"]:
-        fps_button = font("Regular", 18).render("FPS: ENABLED", True, (0, 255, 0))
+        fps_button = options_button_font.render("FPS: ENABLED", True, (0, 255, 0))
     else:
-        fps_button = font("Regular", 18).render("FPS: DISABLED", True, (255, 0, 0))
+        fps_button = options_button_font.render("FPS: DISABLED", True, (255, 0, 0))
 
     if not owns_sell_plan:
-        auto_sell_button = font("Regular", 18).render("Auto Sell: LOCKED", True, (175, 175, 175))
+        auto_sell_button = options_button_font.render("Auto Sell: LOCKED", True, (175, 175, 175))
     elif data["settings"]["auto_sell"] and owns_sell_plan:
-        auto_sell_button = font("Regular", 18).render("Auto Sell: ENABLED", True, (0, 255, 0))
+        auto_sell_button = options_button_font.render("Auto Sell: ENABLED", True, (0, 255, 0))
     elif not data["settings"]["auto_sell"] and owns_sell_plan:
-        auto_sell_button = font("Regular", 18).render("Auto Sell: DISABLED", True, (255, 0, 0))
+        auto_sell_button = options_button_font.render("Auto Sell: DISABLED", True, (255, 0, 0))
 
     if data["auto_bug_catchers"] == 0:
-        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: LOCKED", True, (175, 175, 175))
+        bug_catcher_button = options_button_font.render("Auto Bug Catchers: LOCKED", True, (175, 175, 175))
     elif data["settings"]["bug_catchers"] and data["auto_bug_catchers"] > 0:
-        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: ENABLED", True, (0, 255, 0))
+        bug_catcher_button = options_button_font.render("Auto Bug Catchers: ENABLED", True, (0, 255, 0))
     elif not data["settings"]["bug_catchers"] and data["auto_bug_catchers"] > 0:
-        bug_catcher_button = font("Regular", 18).render("Auto Bug Catchers: DISABLED", True, (255, 0, 0))
+        bug_catcher_button = options_button_font.render("Auto Bug Catchers: DISABLED", True, (255, 0, 0))
 
     title_rect = title.get_rect(center=scale_position(257.5, 80))
     sound_effects_rect = sound_effects_button.get_rect(center=scale_position(257.5, 130))
@@ -447,7 +449,7 @@ def load_settings():
     screen.blit(auto_sell_button, auto_sell_rect)
 
     if bug_catcher_rect.collidepoint(mouse_pos):
-        pygame.draw.rect(screen, (98, 56, 42), bug_catcher_rect.inflate(sx(30), sy(20)))
+        pygame.draw.rect(screen, (98, 56, 42), bug_catcher_rect.inflate(sx(20), sy(10)))
     screen.blit(bug_catcher_button, bug_catcher_rect)
 
     return {
@@ -464,6 +466,9 @@ settings_rects = load_settings()
 quit_frame = load_scaled("assets/ui/confirmation_frame.png", 425, 297.5)
 quit_frame_rect = quit_frame.get_rect(center=(screen_width // 2, screen_height // 2))
 quit_open = False
+
+quit_title_text = font("Regular", 28)
+confirmation_buttons_text = font("Regular", 25)
 
 confirm_rect = pygame.Rect(0, 0, 0, 0)
 cancel_rect = pygame.Rect(0, 0, 0, 0)
@@ -495,7 +500,7 @@ uniques_label_rect = uniques_label.get_rect(center=(scale_position(2040, 137)))
 #[----BUG_CATCHERS----]#
 #[--------------------]#
 
-bug_collecter_net = load_scaled("assets/images/bugnets/bug_catcher_net.png", 160, 160)
+bug_collecter_net = load_scaled("assets/images/bugnets/bionic_bugnet.png", 160, 160)
 
 for i in range(data["auto_bug_catchers"]):
     x = ((screen_width // 2) - ((data["auto_bug_catchers"] - 1) * sx(180) // 2)) + i * sx(180)
@@ -586,6 +591,13 @@ while running:
 
     dt = clock.tick(60) / 1000
     spawn_delay = base_spawn_delay * data["spawn_rate"]
+
+    if len(auto_bug_catchers) != data["auto_bug_catchers"]:
+        auto_bug_catchers.clear()
+        for i in range(data["auto_bug_catchers"]):
+            x = ((screen_width // 2) - ((data["auto_bug_catchers"] - 1) * sx(180) // 2)) + i * sx(180)
+            y = screen_height - sy(200)
+            auto_bug_catchers.append(BugCollector(bug_collecter_net, (x, y)))
 
     if len(screen_bugs) != data["max_bugs"]:
         spawn_timer += dt * 1000
@@ -747,7 +759,7 @@ while running:
     pygame.draw.rect(screen, (0, 0, 0), black_screen_rect)
 
     if quit_open:
-        title = font("Regular", 28).render("Would you like to quit?", True, (255, 255, 255))
+        title = quit_title_text.render("Would you like to quit?", True, (255, 255, 255))
         title_rect = title.get_rect(center=(screen_width // 2, (screen_height // 2) - sy(40)))
 
         confirm_rect = pygame.Rect(0, 0, sx(120), sy(40))
@@ -765,8 +777,8 @@ while running:
         if cancel_rect.collidepoint(mouse_pos):
             cancel_color = (255, 0, 0)
 
-        confirm_button = font("Regular", 25).render("Confirm", True, confirm_color)
-        cancel_button = font("Regular", 25).render("Cancel", True, cancel_color)
+        confirm_button = confirmation_buttons_text.render("Confirm", True, confirm_color)
+        cancel_button = confirmation_buttons_text.render("Cancel", True, cancel_color)
 
         confirm_rect = confirm_button.get_rect(center=confirm_rect.center)
         cancel_rect = cancel_button.get_rect(center=cancel_rect.center)

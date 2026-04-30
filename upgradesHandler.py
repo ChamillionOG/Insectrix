@@ -112,6 +112,8 @@ class UpgradeManager:
                             data["sell_plan"] = "basic"
                         elif button.name == "Auto Sell":
                             data["owns_auto_sell"] = True
+                        elif button.name == "Bionic Bugnet":
+                            data[button.data] += 1
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)
