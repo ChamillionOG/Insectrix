@@ -99,7 +99,9 @@ class UpgradeManager:
                         data["purchases"][button.name] = True
                         buttons.remove(button)
 
-                        if button.name == "Sturdy Bugnet":
+                        if button.name == "Wooden Bugnet":
+                            data["bugnet"] = "wooden"
+                        elif button.name == "Sturdy Bugnet":
                             data["bugnet"] = "sturdy"
                         elif button.name == "Medium Jar":
                             data["container"]["type"] = "medium_jar"

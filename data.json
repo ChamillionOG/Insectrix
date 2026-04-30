@@ -1,9 +1,9 @@
 {
-    "bugs": 1,
+    "bugs": 0,
     "max_bugs": 1,
     "spawn_rate": 5,
-    "currency": 8,
-    "bugnet": "wooden",
+    "currency": 2,
+    "bugnet": "worn",
     "environment": "forest",
     "sprays_bought": 0,
     "pollen_bought": 0,
@@ -11,19 +11,20 @@
     "sell_plan": "free",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
+    "owns_auto_bug_catcher": false,
+    "auto_bug_catchers": 0,
+    "catcher_speed": 2,
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {
-            "monarch_butterfly": 1
-        }
+        "bugs": {}
     },
     "settings": {
         "sound_effects": true,
         "popups": true,
         "music": true,
-        "fps": true,
+        "fps": false,
         "auto_sell": false
     },
     "purchases": {}

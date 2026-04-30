@@ -1,4 +1,8 @@
-{
+{   
+    "worn": {
+        "cooldown": 1.6
+    },
+    
     "wooden": {
         "cooldown": 1.5
     },

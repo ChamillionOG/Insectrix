@@ -13,6 +13,7 @@ from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
+from bug_collector import BugCollector
 from phoneHandler import PhoneManager
 from popupHandler import PopupText
 
@@ -27,7 +28,7 @@ default_data = {
     "max_bugs": 1,
     "spawn_rate": 5,
     "currency": 0,
-    "bugnet": "wooden",
+    "bugnet": "worn",
     "environment": "forest",
     "sprays_bought": 0,
     "pollen_bought": 0,
@@ -35,6 +36,9 @@ default_data = {
     "sell_plan": "free",
     "owns_auto_sell": False,
     "auto_sell_interval": 15000,
+    "owns_auto_bug_catcher": False,
+    "auto_bug_catchers": 0,
+    "catcher_speed": 2,
     "container": {
         "type": "small_jar",
         "capacity": 10,
@@ -80,6 +84,7 @@ popups = []
 screen_bugs = []
 container_bugs = []
 upgrade_buttons = []
+auto_bug_catchers = []
 
 clock = pygame.time.Clock()
 display_currency = data["currency"]
@@ -206,7 +211,7 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
         if credits_content_scale > 0.02:
             credits_label = font("ThinBold", max(1, int(75 * credits_content_scale))).render("Credits", True, (255, 255, 255))
             developer_label = font("Regular", max(1, int(40 * credits_content_scale))).render("Created Entirely By:", True, (255, 255, 255))
-            developer_name = font("Regular", max(1, int(40 * credits_content_scale))).render("ChamillionDevs", True, (255, 255, 255))
+            developer_name = font("Regular", max(1, int(40 * credits_content_scale))).render("ChamillionDev", True, (255, 255, 255))
             socials_label = font("ThinBold", max(1, int(60 * credits_content_scale))).render("Socials", True, (255, 255, 255))
 
             screen.blit(credits_label, credits_label.get_rect(center=(frame_center[0], frame_center_y - sy(420) * credits_content_scale)))
@@ -468,6 +473,17 @@ uniques_button_rect = uniques_button.get_rect(center=(scale_position(2040, 135))
 uniques_label = font("Regular", sx(22)).render("Uniques", True, (255, 255, 255))
 uniques_label_rect = uniques_label.get_rect(center=(scale_position(2040, 137)))
 
+#[--------------------]#
+#[----BUG_CATCHERS----]#
+#[--------------------]#
+
+bug_collecter_net = load_scaled("assets/images/bugnets/bug_catcher_net.png", 160, 160)
+
+for i in range(data["auto_bug_catchers"]):
+    x = ((screen_width // 2) - ((data["auto_bug_catchers"] - 1) * sx(180) // 2)) + i * sx(180)
+    y = screen_height - sy(200)
+    auto_bug_catchers.append(BugCollector(bug_collecter_net, (x, y)))
+
 #[---------------]#
 #[----RUNNING----]#
 #[---------------]#
@@ -595,6 +611,7 @@ while running:
         if popup.dead():
             popups.remove(popup)
 
+
     new_container = data["container"]["type"]
     new_bugnet = data["bugnet"]
 
@@ -678,6 +695,12 @@ while running:
 
     if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos) or (quit_frame_rect.collidepoint(mouse_pos) and quit_open):
         bugnet_manager.visible = False
+
+    for catcher in auto_bug_catchers:
+        catcher.draw(screen)
+
+    for catcher in auto_bug_catchers:
+        catcher.update(screen_bugs, 0.1 + data["catcher_speed"], data, bug_manager.collect_bug, container_manager.rect, bugnet_manager, popups, scale, font, PopupText)
 
     currency_difference = data["currency"] - display_currency
     step = max(1, abs(currency_difference) // sy(10))

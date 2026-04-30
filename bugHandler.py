@@ -142,11 +142,12 @@ class BugManager:
 
         screen_bugs.append(bug)
 
-    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText):
-        if not bugnet_manager.can_swing(time):
+    def collect_bug(self, pos, time, data, container_rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText, ignore_cooldown=False):
+        if not ignore_cooldown and not bugnet_manager.can_swing(time):
             return False
 
-        bugnet_manager.swing(time)
+        if not ignore_cooldown:
+            bugnet_manager.swing(time)
 
         for bug in screen_bugs[:]:
             if bug.rect.collidepoint(pos):
@@ -177,7 +178,6 @@ class BugManager:
                     return True
                 else:
                     popups.append(PopupText(pos, "Full Container!", font("Regular", 30), (255, 0, 0), 40))
-
         return False
 
     def draw(self, screen_width, screen_bugs, screen, scale, sx):

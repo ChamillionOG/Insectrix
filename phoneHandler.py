@@ -1,4 +1,3 @@
-
 class App:
     def __init__(self, name, padding, load_scaled):
         self.name = name

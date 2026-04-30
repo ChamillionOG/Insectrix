@@ -28,9 +28,18 @@
         },
 
         {
+            "name": "Wooden Bugnet",
+            "icon": "assets/images/upgradeIcons/wooden_bugnet_icon.png",
+            "cost": 25,
+            "data": "bugnet",
+            "amount": null,
+            "one_time": true
+        },
+
+        {
             "name": "Sturdy Bugnet",
             "icon": "assets/images/upgradeIcons/sturdy_bugnet_icon.png",
-            "cost": 30,
+            "cost": 50,
             "data": "bugnet",
             "amount": null,
             "one_time": true
