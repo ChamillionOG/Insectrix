@@ -11,6 +11,7 @@ class UpgradeButton:
         self.base_cost = self.config["cost"]
         self.data = self.config["data"]
         self.amount = self.config["amount"]
+        self.requirement = self.config["must_own"]
         self.one_time = self.config["one_time"]
 
         if self.one_time:
@@ -22,6 +23,7 @@ class UpgradeButton:
         
         self.frame = load_scaled("assets/ui/upgrade_button_frame.png", 410.4, 125.6)
         self.cover = load_scaled("assets/ui/upgrade_cover_frame.png", 410.4, 125.6)
+        self.lock = load_scaled("assets/ui/lock_icon.png", 80, 80)
 
         self.name_text = font("ThinBold", 25).render(f"{self.name}", False, (255, 255, 255))
         self.cost_text = font("Thin", 20).render(f"{self.cost:,} Insectra", False, (255, 255, 255))
@@ -35,6 +37,11 @@ class UpgradeButton:
     
     def owns_upgrade(self, data):
         return data["purchases"].get(self.name, False)
+    
+    def meets_requirement(self, data):
+        if not self.requirement:
+            return True
+        return data["purchases"].get(self.requirement, False)
 
     def clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -43,6 +50,9 @@ class UpgradeButton:
         screen.blit(self.frame, self.rect)
 
         if not self.can_afford(data):
+            screen.blit(self.cover, self.rect)
+
+        if not self.meets_requirement(data):
             screen.blit(self.cover, self.rect)
         
         icon_rect = self.icon.get_rect(center=(self.rect.centerx - (155 * self.scale), self.rect.centery + (13 * self.scale)))
@@ -53,6 +63,10 @@ class UpgradeButton:
 
         cost_rect = self.cost_text.get_rect(midleft=(self.rect.centerx - (120 * self.scale), self.rect.centery + (32 * self.scale)))
         screen.blit(self.cost_text, cost_rect)
+
+        if not self.meets_requirement(data):
+            lock_rect = self.lock.get_rect(center=(self.rect.centerx, self.rect.centery + (14 * self.scale)))
+            screen.blit(self.lock, lock_rect)
 
 class UpgradeManager:
     def __init__(self, start_y, position_x, padding):
@@ -91,6 +105,9 @@ class UpgradeManager:
         for button in buttons:
             if not button.visible: continue
             if button.clicked(pos):
+                if not button.meets_requirement(data):
+                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), f"{button.requirement} Required!", font("Regular", 30), (255, 255, 255), 40))
+                    continue
                 if button.can_afford(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255), 40))
                     data["currency"] -= button.cost
@@ -139,6 +156,9 @@ class UpgradeManager:
             is_upgrade = not button.one_time
 
             button.visible = ((is_unique and current_page == "uniques" and not button.owns_upgrade(data)) or (is_upgrade and current_page == "upgrades"))
+
+            if button.name == "Pond Access" and current_page == "uniques":
+                button.visible = data["purchases"].get("Bionic Bugnet", False)
 
             if button.visible:
                 button.rect.center = (self.position_x, y)
