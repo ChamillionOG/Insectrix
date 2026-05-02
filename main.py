@@ -30,6 +30,7 @@ default_data = {
     "currency": 0,
     "bugnet": "worn",
     "environment": "forest",
+    "environment_multiplier": 1,
     "sprays_bought": 0,
     "pollen_bought": 0,
     "clocks_bought": 0,
@@ -322,7 +323,7 @@ black_screen_rect = pygame.Rect(0, 0, screen_width, screen_height)
 #[----MANAGERS----]#
 #[----------------]#
 
-environment_manager = EnvironmentManager((screen_width, screen_height), data)
+environment_manager = EnvironmentManager(data["environment"], environments_list)
 container_manager = ContainerManager(data["container"]["type"], containers_list, screen)
 bug_manager = BugManager(data["environment"], container_bugs, None, bugs_list, environments_list)
 bugnet_manager = BugnetManager(data["bugnet"], bugnets_list)
@@ -361,6 +362,7 @@ def load_stats():
     sell_interval_text = options_button_font.render(f"Auto Sell Interval: {data["auto_sell_interval"] / 1000} (s)", True, (255, 255, 255))
     bugnet_text = options_button_font.render(f"Current Bugnet: {data["bugnet"]}", True, (255, 255, 255))
     environment_text = options_button_font.render(f"Current Environment: {data["environment"]}", True, (255, 255, 255))
+    multiplier_text = options_button_font.render(f"Environment Multiplier: {data["environment_multiplier"]}x", True, (255, 255, 255))
     sell_plan_text = options_button_font.render(f"Current Sell Plan: {data["sell_plan"]}", True, (255, 255, 255))
     container_text = options_button_font.render(f"Current Container: {data["container"]["type"]}", True, (255, 255, 255))
     capacity_text = options_button_font.render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
@@ -373,11 +375,12 @@ def load_stats():
     screen.blit(sell_interval_text, sell_interval_text.get_rect(center=scale_position(257.5, 180)))
     screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 210)))
     screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 240)))
-    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 270)))
-    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 300)))
-    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 330)))
-    screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 360)))
-    screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 390)))
+    screen.blit(multiplier_text, multiplier_text.get_rect(center=scale_position(257.5, 270)))
+    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 300)))
+    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 330)))
+    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 360)))
+    screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 390)))
+    screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 420)))
 
 def load_settings():
     title = options_title_font.render("Settings", False, (255, 255, 255))
@@ -515,12 +518,11 @@ running = True
 
 container_manager.load_container(container_bugs, load_scaled, bugs_list, scale, scale_position, Bug, data)
 bugnet_manager.load_bugnet(load_scaled)
+environment_manager.load_environment(load_scaled, data)
 
 current_container = data["container"]["type"]
 current_bugnet = data["bugnet"]
-
-static_surface = pygame.Surface((screen_width, screen_height))
-static_surface.blit(environment_manager.image, (0, 0))
+current_environment = data["environment"]
 
 clickable_rects = [
     ("options", options_button_rect),
@@ -643,9 +645,9 @@ while running:
         if popup.dead():
             popups.remove(popup)
 
-
     new_container = data["container"]["type"]
     new_bugnet = data["bugnet"]
+    new_environment = data["environment"]
 
     if current_container != new_container:
         container_manager.container_name = new_container
@@ -657,8 +659,13 @@ while running:
         bugnet_manager.bugnet_data = bugnets_list[new_bugnet]
         bugnet_manager.load_bugnet(load_scaled)
         current_bugnet = new_bugnet
+    elif current_environment != new_environment:
+        environment_manager.current_environment = new_environment
+        environment_manager.environment_name = new_environment
+        environment_manager.load_environment(load_scaled, data)
+        current_environment = new_environment
     
-    screen.blit(static_surface, (0, 0))
+    environment_manager.draw(screen)
     screen.blit(container_manager.image, container_manager.rect)
 
     bug_manager.draw(screen_width, screen_bugs, screen, scale, sx)

@@ -96,7 +96,7 @@
             "cost": 1000,
             "data": "environment",
             "amount": null,
-            "must_own": null,
+            "must_own": "Bionic Bugnet",
             "one_time": true
         }
     ]

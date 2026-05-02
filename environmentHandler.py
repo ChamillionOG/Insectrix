@@ -1,14 +1,16 @@
-import pygame
-
 class EnvironmentManager:
-    def __init__(self, screen_size, data):
-        self.screen_size = screen_size
-        self.image = None
+    def __init__(self, current_environment, environments_list):
+        self.current_environment = current_environment
+        self.environments_list = environments_list
 
-        self.update_environment(data)
+        self.environment_name = self.current_environment
 
-    def update_environment(self, data):
-        image  = pygame.image.load(f"assets/images/environments/{data["environment"]}.png")
-        image = pygame.transform.scale(image, self.screen_size)
+    def load_environment(self, load_scaled, data):
+        image = load_scaled(f"assets/images/environments/{self.environment_name}.png", 2560, 1440)
+        data["environment_multiplier"] = self.environments_list[self.current_environment]["multiplier"]
 
         self.image = image
+        self.rect = self.image.get_rect()
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)

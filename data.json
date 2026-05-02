@@ -1,31 +1,37 @@
 {
-    "bugs": 0,
+    "bugs": 3,
     "max_bugs": 1,
     "spawn_rate": 5,
-    "currency": 0,
+    "currency": 7499,
     "bugnet": "worn",
-    "environment": "forest",
+    "environment": "pond",
+    "environment_multiplier": 1.25,
     "sprays_bought": 0,
     "pollen_bought": 0,
     "clocks_bought": 0,
     "sell_plan": "free",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
-    "auto_bug_catchers": 0,
+    "auto_bug_catchers": 1,
     "catcher_speed": 2,
     "container": {
         "type": "small_jar",
         "capacity": 10,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "monarch_butterfly": 3
+        }
     },
     "settings": {
         "sound_effects": true,
         "popups": true,
         "music": true,
-        "fps": false,
+        "fps": true,
         "auto_sell": false,
         "bug_catchers": false
     },
-    "purchases": {}
+    "purchases": {
+        "Bionic Bugnet": true,
+        "Pond Access": true
+    }
 }

@@ -106,7 +106,7 @@ class UpgradeManager:
             if not button.visible: continue
             if button.clicked(pos):
                 if not button.meets_requirement(data):
-                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), f"{button.requirement} Required!", font("Regular", 30), (255, 255, 255), 40))
+                    popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), f"{button.requirement} Required!", font("Regular", 30), (255, 0, 0), 40))
                     continue
                 if button.can_afford(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255), 40))
@@ -131,6 +131,8 @@ class UpgradeManager:
                             data["owns_auto_sell"] = True
                         elif button.name == "Bionic Bugnet":
                             data[button.data] += 1
+                        elif button.name == "Pond Access":
+                            data[button.data] = "pond"
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)
@@ -156,9 +158,6 @@ class UpgradeManager:
             is_upgrade = not button.one_time
 
             button.visible = ((is_unique and current_page == "uniques" and not button.owns_upgrade(data)) or (is_upgrade and current_page == "upgrades"))
-
-            if button.name == "Pond Access" and current_page == "uniques":
-                button.visible = data["purchases"].get("Bionic Bugnet", False)
 
             if button.visible:
                 button.rect.center = (self.position_x, y)
