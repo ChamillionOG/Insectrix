@@ -101,7 +101,7 @@ class UpgradeManager:
         button.cost = int(button.base_cost * (1.15 ** data[button.amount]))
         button.cost_text = font("Thin", 20).render(f"{button.cost:,} Insectra", False, (255, 255, 255))
 
-    def clicked(self, buttons, pos, data, scale, popups, font, PopupText):
+    def clicked(self, buttons, pos, data, scale, popups, font, screen, environment_manager, load_scaled, PopupText):
         for button in buttons:
             if not button.visible: continue
             if button.clicked(pos):
@@ -132,7 +132,8 @@ class UpgradeManager:
                         elif button.name == "Bionic Bugnet":
                             data[button.data] += 1
                         elif button.name == "Pond Access":
-                            data[button.data] = "pond"
+                            environment_manager.target_environment = "pond"
+                            environment_manager.changing = True
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)

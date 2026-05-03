@@ -4,6 +4,7 @@
 
 import webbrowser
 import pygame
+import random
 import json
 import math
 import sys
@@ -530,6 +531,8 @@ clickable_rects = [
     ("uniques", uniques_button_rect)
 ]
 
+changing_environment = False
+
 while running:
     mouse_pos = pygame.mouse.get_pos()
 
@@ -539,7 +542,7 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             bug_manager.collect_bug(event.pos, pygame.time.get_ticks(), data, container_manager.rect, bugnet_manager, screen_bugs, popups, scale, font, PopupText)
-            upgrade_manager.clicked(upgrade_buttons, mouse_pos, data, scale, popups, font, PopupText)
+            upgrade_manager.clicked(upgrade_buttons, mouse_pos, data, scale, popups, font, screen, environment_manager, load_scaled, PopupText)
             phone_manager.clicked(mouse_pos, sellplans_list, data)
 
             if options_button_rect.collidepoint(mouse_pos) and not options_open:
@@ -801,5 +804,8 @@ while running:
 
         if quit_frame_rect.collidepoint(mouse_pos):
             screen.blit(cursor_icon, cursor_icon_rect)
+
+    environment_manager.change_environment(screen.get_width(), screen.get_height(), load_scaled, data)
+    environment_manager.draw_white_screen(screen)
 
     pygame.display.flip()
