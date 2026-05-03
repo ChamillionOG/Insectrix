@@ -22,7 +22,7 @@ class EnvironmentManager:
         self.image = image
         self.rect = self.image.get_rect()
 
-    def change_environment(self, screen_width, screen_height, load_scaled, data):
+    def change_environment(self, screen_width, screen_height, upgrade_manager, buttons, load_scaled, data):
         if not self.changing: return
 
         if not self.start_flash:
@@ -40,6 +40,7 @@ class EnvironmentManager:
                 self.alpha = 255
                 data["environment"] = self.target_environment
                 self.load_environment(load_scaled, data)
+                upgrade_manager.organize_buttons(buttons)
                 self.timer += 1
 
         if self.timer >= 250:

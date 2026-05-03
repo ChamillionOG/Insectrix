@@ -12,6 +12,7 @@ class UpgradeButton:
         self.data = self.config["data"]
         self.amount = self.config["amount"]
         self.requirement = self.config["must_own"]
+        self.environment = self.config["environment"]
         self.one_time = self.config["one_time"]
 
         if self.one_time:
@@ -42,6 +43,9 @@ class UpgradeButton:
         if not self.requirement:
             return True
         return data["purchases"].get(self.requirement, False)
+    
+    def matches_environment(self, data):
+        return self.environment is None or self.environment == data["environment"]
 
     def clicked(self, pos):
         return self.rect.collidepoint(pos)
@@ -92,7 +96,10 @@ class UpgradeManager:
             button.rect.center = self.position_x, y
             y += self.padding
     
-    def is_hovering(self, buttons, pos):
+    def is_hovering(self, buttons, data, pos):
+        for button in buttons:
+            if button.matches_environment(data):
+                continue
         return any(button.visible and button.rect.collidepoint(pos) for button in buttons)
     
     def update_cost(self, button, font, data):
@@ -103,7 +110,7 @@ class UpgradeManager:
 
     def clicked(self, buttons, pos, data, scale, popups, font, screen, environment_manager, load_scaled, PopupText):
         for button in buttons:
-            if not button.visible: continue
+            if not button.visible or not button.matches_environment(data): continue
             if button.clicked(pos):
                 if not button.meets_requirement(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), f"{button.requirement} Required!", font("Regular", 30), (255, 0, 0), 40))
@@ -158,7 +165,13 @@ class UpgradeManager:
             is_unique = button.one_time
             is_upgrade = not button.one_time
 
-            button.visible = ((is_unique and current_page == "uniques" and not button.owns_upgrade(data)) or (is_upgrade and current_page == "upgrades"))
+            button.visible = (
+                (
+                    (is_unique and current_page == "uniques" and not button.owns_upgrade(data)) or
+                    (is_upgrade and current_page == "upgrades")
+                )
+                and (button.environment is None or button.environment == data["environment"])
+            )
 
             if button.visible:
                 button.rect.center = (self.position_x, y)

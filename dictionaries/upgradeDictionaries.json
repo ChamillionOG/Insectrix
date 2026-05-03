@@ -7,6 +7,7 @@
             "data": "spawn_rate",
             "amount": "pollen_bought",
             "must_own": null,
+            "environment": null,
             "one_time": false
         },
 
@@ -17,6 +18,7 @@
             "data": "max_bugs",
             "amount": "sprays_bought",
             "must_own": null,
+            "environment": null,
             "one_time": false
         },
 
@@ -27,6 +29,7 @@
             "data": "auto_sell_interval",
             "amount": "clocks_bought",
             "must_own": "Auto Sell",
+            "environment": "pond",
             "one_time": false
         },
 
@@ -37,6 +40,7 @@
             "data": "bugnet",
             "amount": null,
             "must_own": null,
+            "environment": "forest",
             "one_time": true
         },
 
@@ -47,6 +51,7 @@
             "data": "bugnet",
             "amount": null,
             "must_own": "Wooden Bugnet",
+            "environment": "forest",
             "one_time": true
         },
 
@@ -57,6 +62,7 @@
             "data": "container",
             "amount": null,
             "must_own": null,
+            "environment": "forest",
             "one_time": true
         },
 
@@ -67,6 +73,7 @@
             "data": "sell_plan",
             "amount": null,
             "must_own": null,
+            "environment": "forest",
             "one_time": true
         },
 
@@ -77,6 +84,7 @@
             "data": "owns_auto_sell",
             "amount": null,
             "must_own": null,
+            "environment": "pond",
             "one_time": true
         },
 
@@ -87,6 +95,7 @@
             "data": "auto_bug_catchers",
             "amount": null,
             "must_own": null,
+            "environment": "pond",
             "one_time": true
         },
 
@@ -96,7 +105,8 @@
             "cost": 1000,
             "data": "environment",
             "amount": null,
-            "must_own": "Bionic Bugnet",
+            "must_own": "Basic Sell Plan",
+            "environment": "forest",
             "one_time": true
         }
     ]

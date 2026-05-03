@@ -1,22 +1,22 @@
 {
-    "bugs": 0,
-    "max_bugs": 1,
-    "spawn_rate": 5,
-    "currency": 0,
-    "bugnet": "worn",
-    "environment": "forest",
-    "environment_multiplier": 1,
-    "sprays_bought": 0,
-    "pollen_bought": 0,
+    "bugs": 1,
+    "max_bugs": 7,
+    "spawn_rate": 4.55,
+    "currency": 8633,
+    "bugnet": "sturdy",
+    "environment": "pond",
+    "environment_multiplier": 1.25,
+    "sprays_bought": 6,
+    "pollen_bought": 9,
     "clocks_bought": 0,
-    "sell_plan": "free",
+    "sell_plan": "basic",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
     "auto_bug_catchers": 0,
     "catcher_speed": 2,
     "container": {
-        "type": "small_jar",
-        "capacity": 10,
+        "type": "medium_jar",
+        "capacity": 15,
         "offset": 15,
         "bugs": {}
     },
@@ -28,5 +28,11 @@
         "auto_sell": false,
         "bug_catchers": false
     },
-    "purchases": {}
+    "purchases": {
+        "Wooden Bugnet": true,
+        "Sturdy Bugnet": true,
+        "Medium Jar": true,
+        "Basic Sell Plan": true,
+        "Pond Access": true
+    }
 }

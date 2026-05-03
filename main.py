@@ -735,7 +735,7 @@ while running:
     hovering_ui = any(rect.collidepoint(mouse_pos) for _, rect in clickable_rects)
     bugnet_manager.visible = not hovering_ui
 
-    if upgrade_manager.is_hovering(upgrade_buttons, mouse_pos) or phone_manager.is_hovering(mouse_pos) or (quit_frame_rect.collidepoint(mouse_pos) and quit_open):
+    if upgrade_manager.is_hovering(upgrade_buttons, data, mouse_pos) or phone_manager.is_hovering(mouse_pos) or (quit_frame_rect.collidepoint(mouse_pos) and quit_open):
         bugnet_manager.visible = False
 
     for catcher in auto_bug_catchers:
@@ -805,7 +805,7 @@ while running:
         if quit_frame_rect.collidepoint(mouse_pos):
             screen.blit(cursor_icon, cursor_icon_rect)
 
-    environment_manager.change_environment(screen.get_width(), screen.get_height(), load_scaled, data)
+    environment_manager.change_environment(screen.get_width(), screen.get_height(), upgrade_manager, upgrade_buttons, load_scaled, data)
     environment_manager.draw_white_screen(screen)
 
     pygame.display.flip()
