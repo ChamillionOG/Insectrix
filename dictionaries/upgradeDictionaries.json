@@ -34,13 +34,24 @@
         },
 
         {
+            "name": "Turboflux",
+            "icon": "assets/images/upgradeIcons/auto_sell_icon.png",
+            "cost": 200,
+            "data": "catcher_speed",
+            "amount": "turbos_bought",
+            "must_own": "Bionic Bugnet",
+            "environment": null,
+            "one_time": false
+        },
+
+        {
             "name": "Wooden Bugnet",
             "icon": "assets/images/upgradeIcons/wooden_bugnet_icon.png",
             "cost": 25,
             "data": "bugnet",
             "amount": null,
             "must_own": null,
-            "environment": "forest",
+            "environment": null,
             "one_time": true
         },
 
@@ -51,7 +62,7 @@
             "data": "bugnet",
             "amount": null,
             "must_own": "Wooden Bugnet",
-            "environment": "forest",
+            "environment": null,
             "one_time": true
         },
 
@@ -62,7 +73,7 @@
             "data": "container",
             "amount": null,
             "must_own": null,
-            "environment": "forest",
+            "environment": null,
             "one_time": true
         },
 

@@ -40,16 +40,13 @@ class BugCollector:
             distance = direction.length()
 
             if distance > 1:
-                direction = direction.normalize()
-                self.pos += direction * 5
+                self.pos += direction.normalize() * 5
             else:
                 self.pos = self.start_pos.copy()
-                
-            self.target = None
 
+            self.target = None
             self.swinging = False
             self.returning = False
-
             self.swing_angle = 0
             self.idle_angle = 0
             self.final_angle = 0
@@ -73,6 +70,7 @@ class BugCollector:
 
             eased = math.sin(t * math.pi / 2)
             self.swing_angle = eased * self.max_swing_angle
+
         elif self.returning:
             t = (current_time - self.swing_start_time) / (self.return_duration * 1000)
 
@@ -84,6 +82,24 @@ class BugCollector:
             eased = 1 - math.cos(t * math.pi / 2)
             self.swing_angle = (1 - eased) * self.max_swing_angle
 
+        container_full = data["bugs"] >= data["container"]["capacity"]
+
+        if container_full:
+            self.target = None
+            self.swinging = False
+            self.returning = False
+
+            direction = self.start_pos - self.pos
+            distance = direction.length()
+
+            if distance > 1:
+                self.pos += direction.normalize() * speed * 1.5
+            else:
+                self.pos = self.start_pos.copy()
+
+            self.final_angle = self.idle_angle
+            return
+        
         if self.target not in bugs:
             self.choose_target(bugs)
 
@@ -110,11 +126,10 @@ class BugCollector:
             distance = direction.length()
 
             if distance > 1:
-                direction = direction.normalize()
-                self.pos += direction * speed
+                self.pos += direction.normalize() * speed
             else:
                 self.pos = self.start_pos.copy()
-        
+
         self.final_angle = self.swing_angle + self.idle_angle
 
     def draw(self, screen):

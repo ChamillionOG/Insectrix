@@ -14,7 +14,7 @@ from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
 from bugHandler import Bug, BugManager
-from bug_collector import BugCollector
+from bug_catchers import BugCollector
 from phoneHandler import PhoneManager
 from popupHandler import PopupText
 
@@ -35,6 +35,7 @@ default_data = {
     "sprays_bought": 0,
     "pollen_bought": 0,
     "clocks_bought": 0,
+    "turbos_bought": 0,
     "sell_plan": "free",
     "owns_auto_sell": False,
     "auto_sell_interval": 15000,

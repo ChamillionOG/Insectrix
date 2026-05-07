@@ -1,24 +1,27 @@
 {
-    "bugs": 1,
-    "max_bugs": 7,
-    "spawn_rate": 4.55,
-    "currency": 8633,
-    "bugnet": "sturdy",
+    "bugs": 5,
+    "max_bugs": 1,
+    "spawn_rate": 5,
+    "currency": 329,
+    "bugnet": "worn",
     "environment": "pond",
     "environment_multiplier": 1.25,
-    "sprays_bought": 6,
-    "pollen_bought": 9,
+    "sprays_bought": 0,
+    "pollen_bought": 0,
     "clocks_bought": 0,
+    "turbos_bought": 14,
     "sell_plan": "basic",
     "owns_auto_sell": false,
     "auto_sell_interval": 15000,
-    "auto_bug_catchers": 0,
-    "catcher_speed": 2,
+    "auto_bug_catchers": 1,
+    "catcher_speed": 3.4,
     "container": {
-        "type": "medium_jar",
-        "capacity": 15,
+        "type": "small_jar",
+        "capacity": 10,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "bee": 5
+        }
     },
     "settings": {
         "sound_effects": true,
@@ -26,13 +29,11 @@
         "music": true,
         "fps": false,
         "auto_sell": false,
-        "bug_catchers": false
+        "bug_catchers": true
     },
     "purchases": {
-        "Wooden Bugnet": true,
-        "Sturdy Bugnet": true,
-        "Medium Jar": true,
         "Basic Sell Plan": true,
-        "Pond Access": true
+        "Pond Access": true,
+        "Bionic Bugnet": true
     }
 }

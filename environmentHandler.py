@@ -43,7 +43,7 @@ class EnvironmentManager:
                 upgrade_manager.organize_buttons(buttons)
                 self.timer += 1
 
-        if self.timer >= 250:
+        if self.timer >= 150:
             self.end_flash = True
             self.start_flash = False
 
