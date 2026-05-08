@@ -68,7 +68,7 @@ class PhoneManager:
                 self.image = self.phone_off
                 self.target_y = self.off_position[1]
 
-    def draw(self, screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug):
+    def draw(self, screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, popups, scale, font, Bug, PopupText):
         speed = sy(20)
 
         if self.rect.bottom < self.target_y:
@@ -94,7 +94,7 @@ class PhoneManager:
 
                 for bug_name, amount in data["container"]["bugs"].items():
                     bug_value = bugs_list[bug_name]["value"]
-                    total += bug_value * amount
+                    total += (bug_value * amount) + data["insectra_per_bug"]
                     
                 data["currency"] += total
                 data["container"]["bugs"] = {}
@@ -103,6 +103,7 @@ class PhoneManager:
                 self.selling = False
                 self.image = self.phone_on
                 container_manager.load_bugs(container_bugs, load_scaled, bugs_list, scale, Bug, data)
+                popups.append(PopupText((screen.get_width() / 2, sy(200)), f"+{total:,} Insectra", font("Regular", 40), (0, 255, 0), 180))
 
         screen.blit(self.image, self.rect)
 

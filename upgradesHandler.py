@@ -154,6 +154,8 @@ class UpgradeManager:
                             data[button.data] += 1
                         elif button.name == "Hive Resonance":
                             data[button.data] += 1
+                        elif button.name == "Collector's Dividend":
+                            data[button.data] += 1
                         elif button.name == "Clockwork":
                             data[button.data] -= 100
                         elif button.name == "Turboflux":

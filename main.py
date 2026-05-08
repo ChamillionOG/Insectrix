@@ -34,6 +34,7 @@ default_data = {
     "sprays_bought": 0,
     "pollen_bought": 0,
     "resonance_bought": 0,
+    "collectors_bought": 0,
     "clocks_bought": 0,
     "turbos_bought": 0,
     "sell_plan": "free",
@@ -42,6 +43,7 @@ default_data = {
     "auto_bug_catchers": 0,
     "catcher_speed": 2,
     "insectra_per_second": 0,
+    "insectra_per_bug": 0,
     "container": {
         "type": "small_jar",
         "capacity": 10,
@@ -353,7 +355,7 @@ settings_rect = settings_button.get_rect(topleft=scale_position(15, 185))
 quit_button = load_scaled("assets/ui/quit_button.png", 70, 70)
 quit_rect = quit_button.get_rect(topleft=scale_position(15, 270))
 
-options_frame = load_scaled("assets/ui/options_frame.png", 325, 475)
+options_frame = load_scaled("assets/ui/options_frame.png", 325, 500)
 options_frame_rect = options_frame.get_rect(topleft=scale_position(95, 15))
 
 options_button_font = font("Regular", 18)
@@ -373,20 +375,22 @@ def load_stats():
     bug_catchers_text = options_button_font.render(f"Auto Bug Catchers: {data["auto_bug_catchers"]}", True, (255, 255, 255))
     catcher_speed_text = options_button_font.render(f"Auto Bug Catcher Speed: {data["catcher_speed"]}", True, (255, 255, 255))
     insectra_per_second_text = options_button_font.render(f"Insectra Per Second: {data["insectra_per_second"]}", True, (255, 255, 255))
+    insectra_per_bug_text = options_button_font.render(f"Insectra Per Bug: {data["insectra_per_bug"]}", True, (255, 255, 255))
 
-    screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
-    screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
-    screen.blit(spawn_rate_text, spawn_rate_text.get_rect(center=scale_position(257.5, 150)))
-    screen.blit(sell_interval_text, sell_interval_text.get_rect(center=scale_position(257.5, 180)))
-    screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 210)))
-    screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 240)))
-    screen.blit(multiplier_text, multiplier_text.get_rect(center=scale_position(257.5, 270)))
-    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 300)))
-    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 330)))
-    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 360)))
-    screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 390)))
-    screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 420)))
-    screen.blit(insectra_per_second_text, insectra_per_second_text.get_rect(center=scale_position(257.5, 450)))
+    screen.blit(title, title.get_rect(center=scale_position(257.5, 60)))
+    screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 110)))
+    screen.blit(spawn_rate_text, spawn_rate_text.get_rect(center=scale_position(257.5, 140)))
+    screen.blit(sell_interval_text, sell_interval_text.get_rect(center=scale_position(257.5, 170)))
+    screen.blit(bugnet_text, bugnet_text.get_rect(center=scale_position(257.5, 200)))
+    screen.blit(environment_text, environment_text.get_rect(center=scale_position(257.5, 230)))
+    screen.blit(multiplier_text, multiplier_text.get_rect(center=scale_position(257.5, 260)))
+    screen.blit(sell_plan_text, sell_plan_text.get_rect(center=scale_position(257.5, 290)))
+    screen.blit(container_text, container_text.get_rect(center=scale_position(257.5, 320)))
+    screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 350)))
+    screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 380)))
+    screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 410)))
+    screen.blit(insectra_per_second_text, insectra_per_second_text.get_rect(center=scale_position(257.5, 440)))
+    screen.blit(insectra_per_bug_text, insectra_per_bug_text.get_rect(center=scale_position(257.5, 470)))
 
 def load_settings():
     title = options_title_font.render("Settings", False, (255, 255, 255))
@@ -622,7 +626,7 @@ while running:
         if not data["insectra_per_second"] > 0:
             continue
         data["currency"] += data["insectra_per_second"]
-        popups.append(PopupText((screen_width / 2, sy(200)), f"+{data["insectra_per_second"]} Insectra", font("Regular", 40), (0, 255, 0), 60))
+        popups.append(PopupText((screen_width / 2, sy(200)), f"+{data["insectra_per_second"]:,} Insectra", font("Regular", 40), (0, 255, 0), 60))
 
     autosave_timer += dt * 1000
     if autosave_timer >= autosave_interval:
@@ -643,16 +647,16 @@ while running:
 
             for bug_name, amount in data["container"]["bugs"].items():
                 bug_value = bugs_list[bug_name]["value"]
-                total += bug_value * amount
+                total += (bug_value * amount) + data["insectra_per_bug"]
 
             if total > 0:
-                data["currency"] += total
+                data["currency"] += total 
                 data["container"]["bugs"] = {}
                 data["bugs"] = 0
 
                 container_manager.load_bugs(container_bugs, load_scaled, bugs_list, scale, Bug, data)
 
-                popups.append(PopupText((screen_width / 2, sy(200)), f"+{total} Insectra Auto-Sold", font("Regular", 40), (0, 255, 0), 180))
+                popups.append(PopupText((screen_width / 2, sy(200)), f"+{total:,} Insectra Auto-Sold", font("Regular", 40), (0, 255, 0), 180))
 
             auto_sell_timer = 0
 
@@ -731,7 +735,7 @@ while running:
     screen.blit(uniques_label, uniques_label_rect)
 
     upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
-    phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, scale, Bug)
+    phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, popups, scale, font, Bug, PopupText)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled)
     container_manager.draw(container_bugs, screen, scale, screen_width, sx)
 

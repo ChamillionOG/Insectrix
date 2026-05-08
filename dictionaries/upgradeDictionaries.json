@@ -34,6 +34,17 @@
         },
 
         {
+            "name": "Collector's Dividend",
+            "icon": "assets/images/upgradeIcons/insectra_per_bug_icon.png",
+            "cost": 50,
+            "data": "insectra_per_bug",
+            "amount": "collectors_bought",
+            "must_own": null,
+            "environment": null,
+            "one_time": false
+        },
+
+        {
             "name": "Clockwork",
             "icon": "assets/images/upgradeIcons/sell_timer_icon.png",
             "cost": 100,
