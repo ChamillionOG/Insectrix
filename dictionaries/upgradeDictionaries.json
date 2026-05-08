@@ -23,6 +23,17 @@
         },
 
         {
+            "name": "Hive Resonance",
+            "icon": "assets/images/upgradeIcons/insectra_per_second_icon.png",
+            "cost": 25,
+            "data": "insectra_per_second",
+            "amount": "resonance_bought",
+            "must_own": null,
+            "environment": null,
+            "one_time": false
+        },
+
+        {
             "name": "Clockwork",
             "icon": "assets/images/upgradeIcons/sell_timer_icon.png",
             "cost": 100,

@@ -33,6 +33,7 @@ default_data = {
     "environment_multiplier": 1,
     "sprays_bought": 0,
     "pollen_bought": 0,
+    "resonance_bought": 0,
     "clocks_bought": 0,
     "turbos_bought": 0,
     "sell_plan": "free",
@@ -40,6 +41,7 @@ default_data = {
     "auto_sell_interval": 15000,
     "auto_bug_catchers": 0,
     "catcher_speed": 2,
+    "insectra_per_second": 0,
     "container": {
         "type": "small_jar",
         "capacity": 10,
@@ -81,6 +83,7 @@ autosave_timer = 0
 autosave_interval = 5000
 
 auto_sell_timer = 0
+bug_per_second_timer = 0
 
 popups = []
 screen_bugs = []
@@ -369,6 +372,7 @@ def load_stats():
     capacity_text = options_button_font.render(f"Max Capacity: {data["container"]["capacity"]}", True, (255, 255, 255))
     bug_catchers_text = options_button_font.render(f"Auto Bug Catchers: {data["auto_bug_catchers"]}", True, (255, 255, 255))
     catcher_speed_text = options_button_font.render(f"Auto Bug Catcher Speed: {data["catcher_speed"]}", True, (255, 255, 255))
+    insectra_per_second_text = options_button_font.render(f"Insectra Per Second: {data["insectra_per_second"]}", True, (255, 255, 255))
 
     screen.blit(title, title.get_rect(center=scale_position(257.5, 80)))
     screen.blit(max_bugs_text, max_bugs_text.get_rect(center=scale_position(257.5, 120)))
@@ -382,6 +386,7 @@ def load_stats():
     screen.blit(capacity_text, capacity_text.get_rect(center=scale_position(257.5, 360)))
     screen.blit(bug_catchers_text, bug_catchers_text.get_rect(center=scale_position(257.5, 390)))
     screen.blit(catcher_speed_text, catcher_speed_text.get_rect(center=scale_position(257.5, 420)))
+    screen.blit(insectra_per_second_text, insectra_per_second_text.get_rect(center=scale_position(257.5, 450)))
 
 def load_settings():
     title = options_title_font.render("Settings", False, (255, 255, 255))
@@ -610,6 +615,14 @@ while running:
     if spawn_timer >= spawn_delay and len(screen_bugs) < data["max_bugs"]:
         bug_manager.spawn_bug(screen_width, screen_height, screen_bugs, load_scaled)
         spawn_timer = 0
+
+    bug_per_second_timer += dt * 1000
+    if bug_per_second_timer >= 1000:
+        bug_per_second_timer = 0
+        if not data["insectra_per_second"] > 0:
+            continue
+        data["currency"] += data["insectra_per_second"]
+        popups.append(PopupText((screen_width / 2, sy(200)), f"+{data["insectra_per_second"]} Insectra", font("Regular", 40), (0, 255, 0), 60))
 
     autosave_timer += dt * 1000
     if autosave_timer >= autosave_interval:

@@ -117,6 +117,7 @@ class UpgradeManager:
                     continue
                 if button.can_afford(data):
                     popups.append(PopupText((button.rect.centerx - (325 * scale), button.rect.centery + (30 * scale)), "Purchased!", font("Regular", 30), (255, 255, 255), 40))
+                    popups.append(PopupText((screen.get_width() / 2, 200 * scale), f"-{button.cost} Insectra", font("Regular", 40), (255, 0, 0), 60))
                     data["currency"] -= button.cost
 
                     if button.one_time:
@@ -150,6 +151,8 @@ class UpgradeManager:
                                 data[button.data] -= 0.05
                                 data[button.data] = round(data[button.data], 2)
                         elif button.name == "Florescent Spray":
+                            data[button.data] += 1
+                        elif button.name == "Hive Resonance":
                             data[button.data] += 1
                         elif button.name == "Clockwork":
                             data[button.data] -= 100
