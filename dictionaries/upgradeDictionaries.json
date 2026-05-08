@@ -35,7 +35,7 @@
 
         {
             "name": "Turboflux",
-            "icon": "assets/images/upgradeIcons/auto_sell_icon.png",
+            "icon": "assets/images/upgradeIcons/turboflux_icon.png",
             "cost": 200,
             "data": "catcher_speed",
             "amount": "turbos_bought",

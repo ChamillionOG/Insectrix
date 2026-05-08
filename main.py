@@ -4,7 +4,6 @@
 
 import webbrowser
 import pygame
-import random
 import json
 import math
 import sys
