@@ -625,8 +625,8 @@ while running:
         bug_per_second_timer = 0
         if not data["insectra_per_second"] > 0:
             continue
-        data["currency"] += data["insectra_per_second"]
-        popups.append(PopupText((screen_width / 2, sy(200)), f"+{data["insectra_per_second"]:,} Insectra", font("Regular", 40), (0, 255, 0), 60))
+        data["currency"] += round(data["insectra_per_second"] * data["environment_multiplier"])
+        popups.append(PopupText((screen_width / 2, sy(200)), f"+{round(data["insectra_per_second"] * data["environment_multiplier"]):,} Insectra", font("Regular", 40), (0, 255, 0), 60))
 
     autosave_timer += dt * 1000
     if autosave_timer >= autosave_interval:
@@ -647,7 +647,7 @@ while running:
 
             for bug_name, amount in data["container"]["bugs"].items():
                 bug_value = bugs_list[bug_name]["value"]
-                total += (bug_value * amount) + data["insectra_per_bug"]
+                total += round(((bug_value + data["insectra_per_bug"]) * amount) * data["environment_multiplier"])
 
             if total > 0:
                 data["currency"] += total 

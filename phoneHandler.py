@@ -94,7 +94,7 @@ class PhoneManager:
 
                 for bug_name, amount in data["container"]["bugs"].items():
                     bug_value = bugs_list[bug_name]["value"]
-                    total += (bug_value * amount) + data["insectra_per_bug"]
+                    total += round(((bug_value + data["insectra_per_bug"]) * amount) * data["environment_multiplier"])
                     
                 data["currency"] += total
                 data["container"]["bugs"] = {}

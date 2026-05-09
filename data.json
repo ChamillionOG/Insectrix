@@ -2,7 +2,7 @@
     "bugs": 0,
     "max_bugs": 1,
     "spawn_rate": 5,
-    "currency": 5,
+    "currency": 0,
     "bugnet": "worn",
     "environment": "forest",
     "environment_multiplier": 1,
@@ -29,7 +29,7 @@
         "sound_effects": true,
         "popups": true,
         "music": true,
-        "fps": true,
+        "fps": false,
         "auto_sell": false,
         "bug_catchers": false
     },
