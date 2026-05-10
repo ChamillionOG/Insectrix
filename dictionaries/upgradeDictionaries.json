@@ -51,7 +51,7 @@
             "data": "auto_sell_interval",
             "amount": "clocks_bought",
             "must_own": "Auto Sell",
-            "environment": "pond",
+            "environment": null,
             "one_time": false
         },
 
@@ -140,6 +140,17 @@
             "amount": null,
             "must_own": "Basic Sell Plan",
             "environment": "forest",
+            "one_time": true
+        },
+
+        {
+            "name": "Pond Blessing",
+            "icon": "assets/images/upgradeIcons/auto_sell_icon.png",
+            "cost": 1250,
+            "data": "environment_multiplier",
+            "amount": null,
+            "must_own": "Pond Access",
+            "environment": "pond",
             "one_time": true
         }
     ]

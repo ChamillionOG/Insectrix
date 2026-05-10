@@ -17,7 +17,6 @@ class EnvironmentManager:
 
     def load_environment(self, load_scaled, data):
         image = load_scaled(f"assets/images/environments/{self.environment_name}.png", 2560, 1440)
-        data["environment_multiplier"] = self.environments_list[self.current_environment]["multiplier"]
 
         self.image = image
         self.rect = self.image.get_rect()
