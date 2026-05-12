@@ -155,6 +155,17 @@
         },
 
         {
+            "name": "Kaleidoscope",
+            "icon": "assets/images/upgradeIcons/auto_sell_icon.png",
+            "cost": 999,
+            "data": "insectra_per_second",
+            "amount": null,
+            "must_own": null,
+            "environment": "pond",
+            "one_time": true
+        },
+
+        {
             "name": "Profit Boost I",
             "icon": "assets/images/upgradeIcons/profit_booster_one_icon.png",
             "cost": 999,

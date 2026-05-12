@@ -119,7 +119,8 @@ def update_button(button_img, scale, hovered, center, scale_speed=0.3, hover_sca
 
     return scaled_img, new_rect, scale
 
-def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect, sx, sy, load_scaled):
+def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect, font, sx, sy, load_scaled):
+    version_text = font("ThinBold", 30).render("v1.0.0", True, (255, 255, 255))
     title_x = screen_width // 2
     title_size = 1
 
@@ -254,8 +255,11 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
         screen.blit(scaled_credits_button, credits_button_rect)
         screen.blit(scaled_quit_button, quit_button_rect)
 
+        screen.blit(version_text, version_text.get_rect(bottomleft=(5, 1435)))
+        
         cursor_icon_rect.center = (mouse_x + sx(10), mouse_y + sy(10))
         screen.blit(cursor_icon, cursor_icon_rect)
+
 
         if transition:
             black_screen_rect.y += (0 - black_screen_rect.y) * 0.04
@@ -319,7 +323,7 @@ def font(name, size):
 cursor_icon = load_scaled("assets/ui/mouse_cursor.png", 48, 48)
 cursor_icon_rect = cursor_icon.get_rect()
 
-main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect, sx, sy, load_scaled)
+main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect, font, sx, sy, load_scaled)
 
 last_currency = None
 currency_text_scale = 1.0

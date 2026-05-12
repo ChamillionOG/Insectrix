@@ -146,6 +146,10 @@ class UpgradeManager:
                             data[button.data] = 1.25
                         elif button.name == "Pollen Storm":
                             data[button.data] += 50
+                        elif button.name == "Kaleidoscope":
+                            data[button.data] += 25
+                        elif button.name == "Profit Boost I":
+                            data[button.data] = True
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)
