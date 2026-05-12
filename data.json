@@ -1,37 +1,51 @@
 {
-    "bugs": 0,
-    "max_bugs": 1,
-    "spawn_rate": 5,
-    "currency": 0,
-    "bugnet": "worn",
-    "environment": "forest",
-    "environment_multiplier": 1,
-    "sprays_bought": 0,
-    "pollen_bought": 0,
-    "resonance_bought": 0,
-    "collectors_bought": 0,
-    "clocks_bought": 0,
-    "turbos_bought": 0,
-    "sell_plan": "free",
-    "owns_auto_sell": false,
-    "auto_sell_interval": 15000,
-    "auto_bug_catchers": 0,
-    "catcher_speed": 2,
-    "insectra_per_second": 0,
-    "insectra_per_bug": 0,
+    "bugs": 5,
+    "max_bugs": 21,
+    "spawn_rate": 4.3,
+    "currency": 4517,
+    "bugnet": "sturdy",
+    "environment": "pond",
+    "environment_multiplier": 1.25,
+    "sprays_bought": 20,
+    "pollen_bought": 14,
+    "resonance_bought": 21,
+    "collectors_bought": 6,
+    "clocks_bought": 4,
+    "turbos_bought": 3,
+    "sell_plan": "basic",
+    "owns_auto_sell": true,
+    "owns_profit_booster_one": false,
+    "auto_sell_interval": 14600,
+    "auto_bug_catchers": 1,
+    "catcher_speed": 2.3,
+    "insectra_per_second": 21,
+    "insectra_per_bug": 56,
     "container": {
-        "type": "small_jar",
-        "capacity": 10,
+        "type": "medium_jar",
+        "capacity": 15,
         "offset": 15,
-        "bugs": {}
+        "bugs": {
+            "bee": 5
+        }
     },
     "settings": {
         "sound_effects": true,
         "popups": true,
         "music": true,
-        "fps": false,
-        "auto_sell": false,
-        "bug_catchers": false
+        "fps": true,
+        "auto_sell": true,
+        "bug_catchers": true
     },
-    "purchases": {}
+    "purchases": {
+        "Wooden Bugnet": true,
+        "Sturdy Bugnet": true,
+        "Medium Jar": true,
+        "Basic Sell Plan": true,
+        "Pond Access": true,
+        "Auto Sell": true,
+        "Bionic Bugnet": true,
+        "Pollen Storm": true,
+        "Profit Boost I": true,
+        "Pond Blessing": true
+    }
 }

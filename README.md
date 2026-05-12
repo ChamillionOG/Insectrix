@@ -2,6 +2,12 @@ Insectrix is a bug-collecting adventure where you explore new environments, catc
 
 ⚠️ **This game is currently in development** ⚠️
 
+Created Using:
+- Python
+- Pygame
+- Aseprite
+- Photopea
+
 Created/Developed by **ChamillionOG**
 
 Contact Info: chamillionog@gmail.com

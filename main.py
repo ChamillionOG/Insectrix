@@ -39,6 +39,7 @@ default_data = {
     "turbos_bought": 0,
     "sell_plan": "free",
     "owns_auto_sell": False,
+    "owns_profit_booster_one": False,
     "auto_sell_interval": 15000,
     "auto_bug_catchers": 0,
     "catcher_speed": 2,
@@ -648,6 +649,9 @@ while running:
             for bug_name, amount in data["container"]["bugs"].items():
                 bug_value = bugs_list[bug_name]["value"]
                 total += round(((bug_value + data["insectra_per_bug"]) * amount) * data["environment_multiplier"])
+
+            if data["owns_profit_booster_one"]:
+                total = round(total * 1.5)
 
             if total > 0:
                 data["currency"] += total 

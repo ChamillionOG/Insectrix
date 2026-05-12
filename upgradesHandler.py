@@ -144,6 +144,8 @@ class UpgradeManager:
                             environment_manager.changing = True
                         elif button.name == "Pond Blessing":
                             data[button.data] = 1.25
+                        elif button.name == "Pollen Storm":
+                            data[button.data] += 50
                     else:
                         data[button.amount] += 1
                         self.update_cost(button, font, data)
