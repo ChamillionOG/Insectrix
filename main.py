@@ -4,6 +4,7 @@
 
 import webbrowser
 import pygame
+import random
 import json
 import math
 import sys
@@ -12,6 +13,7 @@ from upgradesHandler import UpgradeButton, UpgradeManager
 from environmentHandler import EnvironmentManager
 from containerHandler import ContainerManager
 from bugnetHandler import BugnetManager
+from pollen_storm import PollenParticle
 from bugHandler import Bug, BugManager
 from bug_catchers import BugCollector
 from phoneHandler import PhoneManager
@@ -88,11 +90,19 @@ autosave_interval = 5000
 auto_sell_timer = 0
 bug_per_second_timer = 0
 
+pollen_storm_active = False
+pollen_storm_original_ips = None
+pollen_storm_timer = 0
+pollen_storm_duration = 20000
+pollen_storm_interval = 30000
+pollen_storm_cooldown_timer = 0
+
 popups = []
 screen_bugs = []
 container_bugs = []
 upgrade_buttons = []
 auto_bug_catchers = []
+pollen_storm_particles = []
 
 clock = pygame.time.Clock()
 display_currency = data["currency"]
@@ -299,7 +309,7 @@ def main_menu(screen, screen_width, screen_height, cursor_icon, cursor_icon_rect
 BASE_WIDTH = 2560
 BASE_HEIGHT = 1440
 
-screen = pygame.display.set_mode((0, 0), pygame.NOFRAME)
+screen = pygame.display.set_mode((0, 0))
 screen_width, screen_height = screen.get_size()
 
 scale_x = screen_width / BASE_WIDTH
@@ -514,6 +524,12 @@ uniques_button_rect = uniques_button.get_rect(center=(scale_position(2040, 135))
 uniques_label = font("Regular", sx(22)).render("Uniques", True, (255, 255, 255))
 uniques_label_rect = uniques_label.get_rect(center=(scale_position(2040, 137)))
 
+pollen_storm_event_frame = load_scaled("assets/ui/square_frame.png", 74, 74)
+pollen_storm_tint = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+pollen_storm_tint.fill((255, 255, 0, 40))
+pollen_storm_icon = load_scaled("assets/images/upgradeIcons/pollen_storm_icon.png", 58, 58)
+pollen_storm_counter_font = font("ThinBold", 18)
+
 #[--------------------]#
 #[----BUG_CATCHERS----]#
 #[--------------------]#
@@ -552,6 +568,9 @@ while running:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            if pollen_storm_original_ips is not None:
+                data["insectra_per_second"] = pollen_storm_original_ips
+
             save_game(data)
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -593,6 +612,9 @@ while running:
                 current_store = "upgrades"
 
             if confirm_rect.collidepoint(mouse_pos):
+                if pollen_storm_original_ips is not None:
+                    data["insectra_per_second"] = pollen_storm_original_ips
+
                 save_game(data)
                 running = False
             elif cancel_rect.collidepoint(mouse_pos):
@@ -637,6 +659,25 @@ while running:
     if autosave_timer >= autosave_interval:
         save_game(data)
         autosave_timer = 0
+
+    if data["purchases"].get("Pollen Storm"):
+        pollen_storm_timer += dt * 1000
+    
+    if not pollen_storm_active and pollen_storm_timer >= pollen_storm_interval:
+        pollen_storm_active = True
+        pollen_storm_timer = 0
+
+        pollen_storm_original_ips = data["insectra_per_second"]
+
+        data["insectra_per_second"] = round(data["insectra_per_second"] * 1.5)
+
+    if pollen_storm_active and pollen_storm_timer >= pollen_storm_duration:
+        pollen_storm_active = False
+        pollen_storm_timer = 0
+
+        if pollen_storm_original_ips is not None:
+            data["insectra_per_second"] = pollen_storm_original_ips
+            pollen_storm_original_ips = None
 
     if data["settings"]["auto_sell"] and data["owns_auto_sell"]:
         auto_sell_timer += dt * 1000
@@ -742,10 +783,36 @@ while running:
     screen.blit(uniques_button, uniques_button_rect)
     screen.blit(uniques_label, uniques_label_rect)
 
+    for catcher in auto_bug_catchers:
+        catcher.draw(screen)
+
+    for catcher in auto_bug_catchers:
+        catcher.update(screen_bugs, 0.1 + data["catcher_speed"], data, bug_manager.collect_bug, container_manager.rect, bugnet_manager, popups, scale, font, PopupText)
+
     upgrade_manager.draw(upgrade_buttons, screen, data, current_store)
     phone_manager.draw(screen, dt, sy, data, container_manager, container_bugs, load_scaled, bugs_list, popups, scale, font, Bug, PopupText)
     bugnet_manager.draw(screen, data, cursor_icon, cursor_icon_rect, scale, load_scaled)
     container_manager.draw(container_bugs, screen, scale, screen_width, sx)
+
+    if pollen_storm_active:
+        pollen_storm_remaining_time = max(0, (pollen_storm_duration - pollen_storm_timer) / 1000)
+        pollen_storm_counter_text = pollen_storm_counter_font.render(f"{int(pollen_storm_remaining_time)}s", True, (255, 255, 255))
+
+        screen.blit(pollen_storm_event_frame, pollen_storm_event_frame.get_rect(center=(screen_width / 2, sy(135))))
+        screen.blit(pollen_storm_icon, pollen_storm_icon.get_rect(center=(screen_width / 2, sy(135))))
+        screen.blit(pollen_storm_counter_text, pollen_storm_counter_text.get_rect(center=(screen_width / 2, sy(185))))
+        screen.blit(pollen_storm_tint, (0, 0))
+
+        if random.random() < 0.3:
+            x = random.randint(0, screen_width)
+            pollen_storm_particles.append(PollenParticle(x, -10))
+    
+    for p in pollen_storm_particles[:]:
+        p.update(dt, pygame.time.get_ticks())
+        p.draw(screen)
+
+        if p.life <= 0 or p.y > screen_height:
+            pollen_storm_particles.remove(p)
 
     for popup in popups:
         popup.draw(screen, data)
@@ -762,12 +829,6 @@ while running:
 
     if upgrade_manager.is_hovering(upgrade_buttons, data, mouse_pos) or phone_manager.is_hovering(mouse_pos) or (quit_frame_rect.collidepoint(mouse_pos) and quit_open):
         bugnet_manager.visible = False
-
-    for catcher in auto_bug_catchers:
-        catcher.draw(screen)
-
-    for catcher in auto_bug_catchers:
-        catcher.update(screen_bugs, 0.1 + data["catcher_speed"], data, bug_manager.collect_bug, container_manager.rect, bugnet_manager, popups, scale, font, PopupText)
 
     currency_difference = data["currency"] - display_currency
     step = max(1, abs(currency_difference) // sy(10))
